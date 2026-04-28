@@ -5,18 +5,17 @@
 //  Created by Samuel Yanez on 4/27/26.
 //
 
-@testable import StockTracker
 import Foundation
+@testable import StockTracker
 import Testing
 
 struct StockDataQuotesRequestTests {
-    
     @Test
-    func urlIncludesEndpointAndQueryItems() throws {
+    func `url includes endpoint and query items`() throws {
         let request = StockDataQuotesRequest(symbols: ["AAPL", "MSFT"])
         let url = try request.url
         let components = try #require(
-            URLComponents(url: url, resolvingAgainstBaseURL: false)
+            URLComponents(url: url, resolvingAgainstBaseURL: false),
         )
         #expect(components.scheme == "https")
         #expect(components.host == "api.stockdata.org")
@@ -26,7 +25,7 @@ struct StockDataQuotesRequestTests {
     }
 
     @Test
-    func decodeReturnsQuotes() throws {
+    func `decode returns quotes`() throws {
         let json = """
         {
             "data": [

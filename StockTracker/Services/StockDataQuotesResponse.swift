@@ -32,7 +32,7 @@ extension StockDataQuote {
         Quote(
             symbol: ticker,
             price: price,
-            percentChange: dayChange
+            percentChange: dayChange,
         )
     }
 }

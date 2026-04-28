@@ -9,9 +9,8 @@
 import Testing
 
 struct StockServiceErrorTests {
-
     @Test
-    func errorDescriptionReturnsUserFriendlyMessage() {
+    func `error description returns user friendly message`() {
         #expect(StockServiceError.invalidURL.errorDescription == "We couldn't create the request.")
         #expect(StockServiceError.invalidResponse.errorDescription == "We couldn't read the server response.")
         #expect(StockServiceError.badStatusCode(500).errorDescription == "We couldn't load the latest prices.")

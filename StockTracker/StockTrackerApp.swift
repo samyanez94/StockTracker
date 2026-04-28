@@ -13,8 +13,13 @@ struct StockTrackerApp: App {
         WindowGroup {
             StockListView(
                 viewModel: StockListViewModel(
-                    service: StockService(usesMockData: true)
-                )
+                    stocks: [
+                        Stock(symbol: "AAPL", companyName: "Apple Inc."),
+                        Stock(symbol: "MSFT", companyName: "Microsoft"),
+                        Stock(symbol: "TSLA", companyName: "Tesla"),
+                    ],
+                    service: StockService(usesMockData: true),
+                ),
             )
         }
     }

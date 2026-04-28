@@ -17,25 +17,21 @@ final class StockListViewModel {
         case failed(String)
     }
 
-    let stocks = [
-        Stock(symbol: "AAPL", companyName: "Apple Inc."),
-        Stock(symbol: "MSFT", companyName: "Microsoft"),
-        Stock(symbol: "TSLA", companyName: "Tesla"),
-    ]
+    let stocks: [Stock]
 
     var quotes: [String: Quote] = [:]
 
     var isShowingErrorAlert = false
 
     var isLoading: Bool {
-        if case .loading = loadState {
+        if case .loading = state {
             return true
         }
         return false
     }
 
     var errorMessage: String? {
-        if case let .failed(message) = loadState {
+        if case let .failed(message) = state {
             return message
         }
         return nil
@@ -45,11 +41,15 @@ final class StockListViewModel {
         stocks.map(\.symbol)
     }
 
-    private(set) var loadState = LoadState.idle
+    private(set) var state = LoadState.idle
 
     private let service: any StockServicing
 
-    init(service: any StockServicing) {
+    init(
+        stocks: [Stock],
+        service: any StockServicing,
+    ) {
+        self.stocks = stocks
         self.service = service
     }
 
@@ -59,24 +59,24 @@ final class StockListViewModel {
 
     func dismissError() {
         isShowingErrorAlert = false
-        loadState = quotes.isEmpty ? .idle : .loaded
+        state = quotes.isEmpty ? .idle : .loaded
     }
 
     func refresh() async {
         guard !isLoading else {
             return
         }
-        loadState = .loading
+        state = .loading
         do {
             let fetchedQuotes = try await service.fetch(
-                StockDataQuotesRequest(symbols: symbols)
+                StockDataQuotesRequest(symbols: symbols),
             )
             updateQuotes(with: fetchedQuotes)
-            loadState = .loaded
+            state = .loaded
         } catch is CancellationError {
-            loadState = quotes.isEmpty ? .idle : .loaded
+            state = quotes.isEmpty ? .idle : .loaded
         } catch {
-            loadState = .failed(error.localizedDescription)
+            state = .failed(error.localizedDescription)
         }
     }
 
@@ -89,7 +89,7 @@ final class StockListViewModel {
 
     private func updateQuotes(with fetchedQuotes: [Quote]) {
         quotes = Dictionary(
-            uniqueKeysWithValues: fetchedQuotes.map { ($0.symbol, $0) }
+            uniqueKeysWithValues: fetchedQuotes.map { ($0.symbol, $0) },
         )
     }
 }

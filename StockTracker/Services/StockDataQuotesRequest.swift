@@ -21,16 +21,16 @@ struct StockDataQuotesRequest: StockRequest {
             }
             var components = URLComponents(
                 url: endpoint,
-                resolvingAgainstBaseURL: false
+                resolvingAgainstBaseURL: false,
             )
             components?.queryItems = [
                 URLQueryItem(
                     name: "symbols",
-                    value: symbols.joined(separator: ",")
+                    value: symbols.joined(separator: ","),
                 ),
                 URLQueryItem(
                     name: "api_token",
-                    value: Secrets.stockDataAPIKey
+                    value: Secrets.stockDataAPIKey,
                 ),
             ]
             guard let url = components?.url else {
@@ -43,7 +43,7 @@ struct StockDataQuotesRequest: StockRequest {
     func decode(_ data: Data) throws -> [Quote] {
         let response = try JSONDecoder().decode(
             StockDataQuotesResponse.self,
-            from: data
+            from: data,
         )
         return response.quotes
     }

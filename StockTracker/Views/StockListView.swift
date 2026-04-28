@@ -23,7 +23,7 @@ struct StockListView: View {
             .errorAlert(
                 isPresented: $viewModel.isShowingErrorAlert,
                 message: viewModel.errorMessage,
-                dismiss: viewModel.dismissError
+                dismiss: viewModel.dismissError,
             )
             .onChange(of: viewModel.errorMessage) { _, errorMessage in
                 if errorMessage != nil {
@@ -44,7 +44,7 @@ private extension View {
     func errorAlert(
         isPresented: Binding<Bool>,
         message: String?,
-        dismiss: @escaping () -> Void
+        dismiss: @escaping () -> Void,
     ) -> some View {
         alert(
             "Error",
@@ -56,7 +56,7 @@ private extension View {
             },
             message: {
                 Text(message ?? "Please try again later.")
-            }
+            },
         )
     }
 }
@@ -64,7 +64,12 @@ private extension View {
 #Preview {
     StockListView(
         viewModel: StockListViewModel(
-            service: StockService(usesMockData: true)
-        )
+            stocks: [
+                Stock(symbol: "AAPL", companyName: "Apple Inc."),
+                Stock(symbol: "MSFT", companyName: "Microsoft"),
+                Stock(symbol: "TSLA", companyName: "Tesla"),
+            ],
+            service: StockService(usesMockData: true),
+        ),
     )
 }
