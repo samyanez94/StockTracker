@@ -14,21 +14,21 @@ protocol StockServicing {
 struct StockService: StockServicing {
     private let usesMockData: Bool
 
-    nonisolated init(usesMockData: Bool = false) {
+    init(usesMockData: Bool = false) {
         self.usesMockData = usesMockData
     }
 
-    nonisolated func fetch<Request: StockRequest>(_ request: Request) async throws -> Request.Response {
-        if usesMockData, let mockResponse = await request.mockResponse() {
+    func fetch<Request: StockRequest>(_ request: Request) async throws -> Request.Response {
+        if usesMockData, let mockResponse = request.mockResponse() {
             return mockResponse
         }
         let (data, response) = try await URLSession.shared.data(from: request.url)
         try validate(response)
 
-        return try await request.decode(data)
+        return try request.decode(data)
     }
 
-    private nonisolated func validate(_ response: URLResponse) throws {
+    private func validate(_ response: URLResponse) throws {
         guard let httpResponse = response as? HTTPURLResponse else {
             throw StockServiceError.invalidResponse
         }
