@@ -49,10 +49,6 @@ final class StockListViewModel {
 
     private let service: any StockServicing
 
-    init() {
-        self.service = StockService(usesMockData: true)
-    }
-
     init(service: any StockServicing) {
         self.service = service
     }

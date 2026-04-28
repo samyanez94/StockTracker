@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct StockListView: View {
-    @State private var viewModel = StockListViewModel()
+    @State private var viewModel: StockListViewModel
+
+    init(viewModel: StockListViewModel) {
+        self.viewModel = viewModel
+    }
 
     var body: some View {
         NavigationStack {
@@ -58,5 +62,9 @@ private extension View {
 }
 
 #Preview {
-    StockListView()
+    StockListView(
+        viewModel: StockListViewModel(
+            service: StockService(usesMockData: true)
+        )
+    )
 }
