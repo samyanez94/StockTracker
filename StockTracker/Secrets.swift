@@ -1,10 +1,7 @@
-//
-//  Secrets.swift
-//  StockTracker
-//
-//  Created by Samuel Yanez on 4/27/26.
-//
+import Foundation
 
 enum Secrets {
-    static let stockDataAPIKey = "K0L6EidR7lk0JNJabjJsZJIJ33Cc5yV0PzgSAfuF"
+    static var stockDataAPIKey: String {
+        Bundle.main.object(forInfoDictionaryKey: "StockDataAPIKey") as? String ?? ""
+    }
 }
