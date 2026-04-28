@@ -10,28 +10,15 @@ import Foundation
 @MainActor
 @Observable
 final class StockListViewModel {
-    enum LoadState {
-        case idle
-        case loading
-        case loaded
-    }
-
     let stocks: [Stock]
 
     var quotes: [String: Quote] = [:]
-
-    var isLoading: Bool {
-        if case .loading = state {
-            return true
-        }
-        return false
-    }
 
     private var symbols: [String] {
         stocks.map(\.symbol)
     }
 
-    private(set) var state = LoadState.idle
+    private var isRefreshing = false
 
     private let service: any StockServicing
 
@@ -48,20 +35,20 @@ final class StockListViewModel {
     }
 
     func refresh() async {
-        guard !isLoading else {
+        guard !isRefreshing else {
             return
         }
-        state = .loading
+        isRefreshing = true
+        defer {
+            isRefreshing = false
+        }
         do {
             let fetchedQuotes = try await service.fetch(
                 StockDataQuotesRequest(symbols: symbols),
             )
             updateQuotes(with: fetchedQuotes)
-            state = .loaded
-        } catch is CancellationError {
-            state = quotes.isEmpty ? .idle : .loaded
         } catch {
-            state = quotes.isEmpty ? .idle : .loaded
+            return
         }
     }
 
