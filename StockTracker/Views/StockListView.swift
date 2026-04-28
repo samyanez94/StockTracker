@@ -64,11 +64,7 @@ private extension View {
 #Preview {
     StockListView(
         viewModel: StockListViewModel(
-            stocks: [
-                Stock(symbol: "AAPL", companyName: "Apple Inc."),
-                Stock(symbol: "MSFT", companyName: "Microsoft"),
-                Stock(symbol: "TSLA", companyName: "Tesla"),
-            ],
+            stocks: AppFactory.stocks,
             service: StockService(usesMockData: true),
         ),
     )

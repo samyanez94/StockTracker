@@ -11,16 +11,25 @@ import SwiftUI
 struct StockTrackerApp: App {
     var body: some Scene {
         WindowGroup {
-            StockListView(
-                viewModel: StockListViewModel(
-                    stocks: [
-                        Stock(symbol: "AAPL", companyName: "Apple Inc."),
-                        Stock(symbol: "MSFT", companyName: "Microsoft"),
-                        Stock(symbol: "TSLA", companyName: "Tesla"),
-                    ],
-                    service: StockService(usesMockData: true),
-                ),
-            )
+            AppFactory.makeStockListView()
         }
     }
+}
+
+enum AppFactory {
+    @MainActor
+    static func makeStockListView() -> StockListView {
+        StockListView(
+            viewModel: StockListViewModel(
+                stocks: stocks,
+                service: StockService(usesMockData: true),
+            ),
+        )
+    }
+
+    static let stocks = [
+        Stock(symbol: "AAPL", companyName: "Apple Inc."),
+        Stock(symbol: "MSFT", companyName: "Microsoft"),
+        Stock(symbol: "TSLA", companyName: "Tesla"),
+    ]
 }
