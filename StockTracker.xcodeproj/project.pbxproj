@@ -14,19 +14,11 @@
 			remoteGlobalIDString = 919632B72F9FED100060D292;
 			remoteInfo = StockTracker;
 		};
-		919632D02F9FED110060D292 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 919632B02F9FED100060D292 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 919632B72F9FED100060D292;
-			remoteInfo = StockTracker;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		919632B82F9FED100060D292 /* StockTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StockTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		919632C52F9FED110060D292 /* StockTrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StockTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		919632CF2F9FED110060D292 /* StockTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StockTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -57,13 +49,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		919632CC2F9FED110060D292 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -81,7 +66,6 @@
 			children = (
 				919632B82F9FED100060D292 /* StockTracker.app */,
 				919632C52F9FED110060D292 /* StockTrackerTests.xctest */,
-				919632CF2F9FED110060D292 /* StockTrackerUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -134,26 +118,6 @@
 			productReference = 919632C52F9FED110060D292 /* StockTrackerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		919632CE2F9FED110060D292 /* StockTrackerUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 919632DF2F9FED110060D292 /* Build configuration list for PBXNativeTarget "StockTrackerUITests" */;
-			buildPhases = (
-				919632CB2F9FED110060D292 /* Sources */,
-				919632CC2F9FED110060D292 /* Frameworks */,
-				919632CD2F9FED110060D292 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				919632D12F9FED110060D292 /* PBXTargetDependency */,
-			);
-			name = StockTrackerUITests;
-			packageProductDependencies = (
-			);
-			productName = StockTrackerUITests;
-			productReference = 919632CF2F9FED110060D292 /* StockTrackerUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -168,10 +132,6 @@
 						CreatedOnToolsVersion = 26.4.1;
 					};
 					919632C42F9FED110060D292 = {
-						CreatedOnToolsVersion = 26.4.1;
-						TestTargetID = 919632B72F9FED100060D292;
-					};
-					919632CE2F9FED110060D292 = {
 						CreatedOnToolsVersion = 26.4.1;
 						TestTargetID = 919632B72F9FED100060D292;
 					};
@@ -193,7 +153,6 @@
 			targets = (
 				919632B72F9FED100060D292 /* StockTracker */,
 				919632C42F9FED110060D292 /* StockTrackerTests */,
-				919632CE2F9FED110060D292 /* StockTrackerUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -207,13 +166,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		919632C32F9FED110060D292 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		919632CD2F9FED110060D292 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -237,13 +189,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		919632CB2F9FED110060D292 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -251,11 +196,6 @@
 			isa = PBXTargetDependency;
 			target = 919632B72F9FED100060D292 /* StockTracker */;
 			targetProxy = 919632C62F9FED110060D292 /* PBXContainerItemProxy */;
-		};
-		919632D12F9FED110060D292 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 919632B72F9FED100060D292 /* StockTracker */;
-			targetProxy = 919632D02F9FED110060D292 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -489,46 +429,6 @@
 			};
 			name = Release;
 		};
-		919632E02F9FED110060D292 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = QFXSZ288GU;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.samuel.StockTrackerUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = StockTracker;
-			};
-			name = Debug;
-		};
-		919632E12F9FED110060D292 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = QFXSZ288GU;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.samuel.StockTrackerUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = StockTracker;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -555,15 +455,6 @@
 			buildConfigurations = (
 				919632DD2F9FED110060D292 /* Debug */,
 				919632DE2F9FED110060D292 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		919632DF2F9FED110060D292 /* Build configuration list for PBXNativeTarget "StockTrackerUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				919632E02F9FED110060D292 /* Debug */,
-				919632E12F9FED110060D292 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
