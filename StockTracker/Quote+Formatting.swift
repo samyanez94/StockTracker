@@ -1,5 +1,5 @@
 //
-//  QuoteFormatting.swift
+//  Quote+Formatting.swift
 //  StockTracker
 //
 //  Created by Samuel Yanez on 4/27/26.

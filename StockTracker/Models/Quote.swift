@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Quote: Sendable {
+struct Quote {
     let symbol: String
     let price: Double
     let percentChange: Double

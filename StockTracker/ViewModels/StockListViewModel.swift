@@ -20,13 +20,13 @@ final class StockListViewModel {
     let stocks = [
         Stock(symbol: "AAPL", companyName: "Apple Inc."),
         Stock(symbol: "MSFT", companyName: "Microsoft"),
-        Stock(symbol: "TSLA", companyName: "Tesla")
+        Stock(symbol: "TSLA", companyName: "Tesla"),
     ]
 
     var quotes: [String: Quote] = [:]
-    
+
     var isShowingErrorAlert = false
-    
+
     var isLoading: Bool {
         if case .loading = loadState {
             return true
@@ -40,11 +40,11 @@ final class StockListViewModel {
         }
         return nil
     }
-    
+
     private var symbols: [String] {
         stocks.map(\.symbol)
     }
-    
+
     private(set) var loadState = LoadState.idle
 
     private let service: any StockServicing
@@ -52,6 +52,7 @@ final class StockListViewModel {
     init(service: any StockServicing = StockService(usesMockData: true)) {
         self.service = service
     }
+
     func quote(for stock: Stock) -> Quote? {
         quotes[stock.symbol]
     }
@@ -85,7 +86,7 @@ final class StockListViewModel {
             try? await Task.sleep(for: .seconds(60))
         }
     }
-    
+
     private func updateQuotes(with fetchedQuotes: [Quote]) {
         quotes = Dictionary(
             uniqueKeysWithValues: fetchedQuotes.map { ($0.symbol, $0) }

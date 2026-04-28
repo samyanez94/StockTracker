@@ -31,7 +31,7 @@ struct StockDataQuotesRequest: StockRequest {
                 URLQueryItem(
                     name: "api_token",
                     value: Secrets.stockDataAPIKey
-                )
+                ),
             ]
             guard let url = components?.url else {
                 throw StockServiceError.invalidURL

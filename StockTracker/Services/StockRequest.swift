@@ -13,7 +13,7 @@ protocol StockRequest {
     var url: URL { get throws }
 
     func decode(_ data: Data) throws -> Response
-    
+
     func mockResponse() -> Response?
 }
 

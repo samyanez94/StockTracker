@@ -11,7 +11,7 @@ protocol StockServicing {
     func fetch<Request: StockRequest>(_ request: Request) async throws -> Request.Response
 }
 
-struct StockService: StockServicing, Sendable {
+struct StockService: StockServicing {
     private let usesMockData: Bool
 
     nonisolated init(usesMockData: Bool = false) {
@@ -28,12 +28,12 @@ struct StockService: StockServicing, Sendable {
         return try await request.decode(data)
     }
 
-    nonisolated private func validate(_ response: URLResponse) throws {
+    private nonisolated func validate(_ response: URLResponse) throws {
         guard let httpResponse = response as? HTTPURLResponse else {
             throw StockServiceError.invalidResponse
         }
 
-        guard (200...299).contains(httpResponse.statusCode) else {
+        guard (200 ... 299).contains(httpResponse.statusCode) else {
             throw StockServiceError.badStatusCode(httpResponse.statusCode)
         }
     }

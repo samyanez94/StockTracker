@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Stock: Identifiable, Hashable, Sendable {
+struct Stock: Identifiable, Hashable {
     let id = UUID()
     let symbol: String
     let companyName: String

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct StockDataQuotesResponse: Decodable, Sendable {
+struct StockDataQuotesResponse: Decodable {
     let data: [StockDataQuote]
 
     var quotes: [Quote] {
@@ -15,7 +15,7 @@ struct StockDataQuotesResponse: Decodable, Sendable {
     }
 }
 
-struct StockDataQuote: Decodable, Sendable {
+struct StockDataQuote: Decodable {
     let ticker: String
     let price: Double
     let dayChange: Double
@@ -39,11 +39,11 @@ extension StockDataQuote {
 
 extension StockDataQuotesResponse {
     private static let mockQuotes = [
-        "AAPL": StockDataQuote(ticker: "AAPL", price: 204.18, dayChange: Double.random(in: -1...1)),
-        "MSFT": StockDataQuote(ticker: "MSFT", price: 391.44, dayChange: Double.random(in: -1...1)),
-        "TSLA": StockDataQuote(ticker: "TSLA", price: 169.28, dayChange: Double.random(in: -1...1))
+        "AAPL": StockDataQuote(ticker: "AAPL", price: 204.18, dayChange: Double.random(in: -1 ... 1)),
+        "MSFT": StockDataQuote(ticker: "MSFT", price: 391.44, dayChange: Double.random(in: -1 ... 1)),
+        "TSLA": StockDataQuote(ticker: "TSLA", price: 169.28, dayChange: Double.random(in: -1 ... 1)),
     ]
-    
+
     static func mock(for symbols: [String]) -> Self {
         StockDataQuotesResponse(data: symbols.compactMap { mockQuotes[$0] })
     }
