@@ -8,7 +8,9 @@
 import Foundation
 
 struct Stock: Identifiable, Hashable {
-    var id: String { symbol }
+    var id: String {
+        symbol
+    }
 
     let symbol: String
     let companyName: String

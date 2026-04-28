@@ -14,27 +14,17 @@ final class StockListViewModel {
         case idle
         case loading
         case loaded
-        case failed(String)
     }
 
     let stocks: [Stock]
 
     var quotes: [String: Quote] = [:]
 
-    var isShowingErrorAlert = false
-
     var isLoading: Bool {
         if case .loading = state {
             return true
         }
         return false
-    }
-
-    var errorMessage: String? {
-        if case let .failed(message) = state {
-            return message
-        }
-        return nil
     }
 
     private var symbols: [String] {
@@ -57,11 +47,6 @@ final class StockListViewModel {
         quotes[stock.symbol]
     }
 
-    func dismissError() {
-        isShowingErrorAlert = false
-        state = quotes.isEmpty ? .idle : .loaded
-    }
-
     func refresh() async {
         guard !isLoading else {
             return
@@ -76,7 +61,7 @@ final class StockListViewModel {
         } catch is CancellationError {
             state = quotes.isEmpty ? .idle : .loaded
         } catch {
-            state = .failed(error.localizedDescription)
+            state = quotes.isEmpty ? .idle : .loaded
         }
     }
 
