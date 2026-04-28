@@ -21,7 +21,12 @@ struct StockListView: View {
                    !viewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                 {
                     ForEach(viewModel.searchResults) { stock in
-                        StockSearchResultRowView(stock: stock)
+                        StockSearchResultRowView(
+                            stock: stock,
+                            isInWatchlist: viewModel.isInWatchlist(stock),
+                        ) {
+                            viewModel.toggleWatchlistMembership(for: stock)
+                        }
                     }
                 } else {
                     ForEach(viewModel.stocks) { stock in

@@ -90,6 +90,33 @@ struct StockListViewModelTests {
         #expect(viewModel.stocks == [apple])
         #expect(viewModel.searchResults.isEmpty)
     }
+
+    @Test
+    func `toggle watchlist membership adds stock when missing`() {
+        let apple = Stock(symbol: "AAPL", companyName: "Apple Inc.")
+        let microsoft = Stock(symbol: "MSFT", companyName: "Microsoft Corporation")
+        let viewModel = StockListViewModel(stocks: [apple], service: MockStockService())
+
+        viewModel.toggleWatchlistMembership(for: microsoft)
+
+        #expect(viewModel.stocks == [apple, microsoft])
+        #expect(viewModel.isInWatchlist(microsoft))
+    }
+
+    @Test
+    func `toggle watchlist membership removes stock when present`() {
+        let apple = Stock(symbol: "AAPL", companyName: "Apple Inc.")
+        let viewModel = StockListViewModel(stocks: [apple], service: MockStockService())
+        viewModel.quotes = [
+            "AAPL": Quote(symbol: "AAPL", price: 204.18, percentChange: 0.62),
+        ]
+
+        viewModel.toggleWatchlistMembership(for: apple)
+
+        #expect(viewModel.stocks.isEmpty)
+        #expect(!viewModel.isInWatchlist(apple))
+        #expect(viewModel.quote(for: apple) == nil)
+    }
 }
 
 private actor MockStockService: StockServicing {

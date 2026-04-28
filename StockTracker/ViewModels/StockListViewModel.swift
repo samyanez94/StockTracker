@@ -40,6 +40,19 @@ final class StockListViewModel {
         quotes[stock.symbol]
     }
 
+    func isInWatchlist(_ stock: Stock) -> Bool {
+        stocks.contains { $0.symbol == stock.symbol }
+    }
+
+    func toggleWatchlistMembership(for stock: Stock) {
+        if let index = stocks.firstIndex(where: { $0.symbol == stock.symbol }) {
+            stocks.remove(at: index)
+            quotes[stock.symbol] = nil
+        } else {
+            stocks.append(stock)
+        }
+    }
+
     func search() async {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else {

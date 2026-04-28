@@ -9,14 +9,26 @@ import SwiftUI
 
 struct StockSearchResultRowView: View {
     let stock: Stock
+    let isInWatchlist: Bool
+    let toggleWatchlistMembership: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(stock.symbol)
-                .font(.headline)
-            Text(stock.companyName)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+        HStack {
+            VStack(alignment: .leading) {
+                Text(stock.symbol)
+                    .font(.headline)
+                Text(stock.companyName)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Button {
+                toggleWatchlistMembership()
+            } label: {
+                Image(systemName: isInWatchlist ? "checkmark.circle.fill" : "plus.circle")
+                    .imageScale(.large)
+            }
+            .accessibilityLabel(isInWatchlist ? "Remove from watchlist" : "Add to watchlist")
         }
     }
 }
