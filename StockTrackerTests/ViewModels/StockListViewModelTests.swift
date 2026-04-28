@@ -92,29 +92,46 @@ struct StockListViewModelTests {
     }
 
     @Test
-    func `toggle watchlist membership adds stock when missing`() {
+    func `toggle watchlist membership adds stock when missing and refreshes quotes`() async {
         let apple = Stock(symbol: "AAPL", companyName: "Apple Inc.")
         let microsoft = Stock(symbol: "MSFT", companyName: "Microsoft Corporation")
-        let viewModel = StockListViewModel(stocks: [apple], service: MockStockService())
+        let quote = Quote(symbol: "MSFT", price: 391.44, percentChange: 0.34)
+        let service = MockStockService(quotes: [quote])
+        let viewModel = StockListViewModel(stocks: [apple], service: service)
 
-        viewModel.toggleWatchlistMembership(for: microsoft)
+        await viewModel.toggleWatchlistMembership(for: microsoft)
 
         #expect(viewModel.stocks == [apple, microsoft])
         #expect(viewModel.isInWatchlist(microsoft))
+        #expect(viewModel.quote(for: microsoft)?.price == 391.44)
     }
 
     @Test
-    func `toggle watchlist membership removes stock when present`() {
+    func `toggle watchlist membership removes stock when present`() async {
         let apple = Stock(symbol: "AAPL", companyName: "Apple Inc.")
         let viewModel = StockListViewModel(stocks: [apple], service: MockStockService())
         viewModel.quotes = [
             "AAPL": Quote(symbol: "AAPL", price: 204.18, percentChange: 0.62),
         ]
 
-        viewModel.toggleWatchlistMembership(for: apple)
+        await viewModel.toggleWatchlistMembership(for: apple)
 
         #expect(viewModel.stocks.isEmpty)
         #expect(!viewModel.isInWatchlist(apple))
+        #expect(viewModel.quote(for: apple) == nil)
+    }
+
+    @Test
+    func `remove from watchlist removes stock and quote`() {
+        let apple = Stock(symbol: "AAPL", companyName: "Apple Inc.")
+        let viewModel = StockListViewModel(stocks: [apple], service: MockStockService())
+        viewModel.quotes = [
+            "AAPL": Quote(symbol: "AAPL", price: 204.18, percentChange: 0.62),
+        ]
+
+        viewModel.removeFromWatchlist(apple)
+
+        #expect(viewModel.stocks.isEmpty)
         #expect(viewModel.quote(for: apple) == nil)
     }
 }

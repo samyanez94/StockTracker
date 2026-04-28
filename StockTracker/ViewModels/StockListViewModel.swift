@@ -44,13 +44,18 @@ final class StockListViewModel {
         stocks.contains { $0.symbol == stock.symbol }
     }
 
-    func toggleWatchlistMembership(for stock: Stock) {
-        if let index = stocks.firstIndex(where: { $0.symbol == stock.symbol }) {
-            stocks.remove(at: index)
-            quotes[stock.symbol] = nil
+    func toggleWatchlistMembership(for stock: Stock) async {
+        if isInWatchlist(stock) {
+            removeFromWatchlist(stock)
         } else {
             stocks.append(stock)
+            await refresh()
         }
+    }
+
+    func removeFromWatchlist(_ stock: Stock) {
+        stocks.removeAll { $0.symbol == stock.symbol }
+        quotes[stock.symbol] = nil
     }
 
     func search() async {

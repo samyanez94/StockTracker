@@ -25,12 +25,21 @@ struct StockListView: View {
                             stock: stock,
                             isInWatchlist: viewModel.isInWatchlist(stock),
                         ) {
-                            viewModel.toggleWatchlistMembership(for: stock)
+                            Task {
+                                await viewModel.toggleWatchlistMembership(for: stock)
+                            }
                         }
                     }
                 } else {
                     ForEach(viewModel.stocks) { stock in
                         StockRowView(stock: stock, quote: viewModel.quote(for: stock))
+                            .swipeActions(edge: .trailing) {
+                                Button(role: .destructive) {
+                                    viewModel.removeFromWatchlist(stock)
+                                } label: {
+                                    Label("Remove", systemImage: "trash")
+                                }
+                            }
                     }
                 }
             }

@@ -28,6 +28,8 @@ struct StockSearchResultRowView: View {
                 Image(systemName: isInWatchlist ? "checkmark.circle.fill" : "plus.circle")
                     .imageScale(.large)
             }
+            .buttonStyle(.plain)
+            .foregroundStyle(.blue)
             .accessibilityLabel(isInWatchlist ? "Remove from watchlist" : "Add to watchlist")
         }
     }
