@@ -10,9 +10,15 @@ import Foundation
 @MainActor
 @Observable
 final class StockListViewModel {
-    let stocks: [Stock]
+    var stocks: [Stock]
+
+    var searchResults: [Stock] = []
 
     var quotes: [String: Quote] = [:]
+
+    var searchText = ""
+
+    var isSearchPresented = false
 
     private var symbols: [String] {
         stocks.map(\.symbol)
@@ -32,6 +38,29 @@ final class StockListViewModel {
 
     func quote(for stock: Stock) -> Quote? {
         quotes[stock.symbol]
+    }
+
+    func search() async {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else {
+            searchResults = []
+            return
+        }
+        do {
+            let searchResults = try await service.fetch(
+                StockDataSearchRequest(query: query),
+            )
+            if query == searchText.trimmingCharacters(in: .whitespacesAndNewlines) {
+                self.searchResults = searchResults
+            }
+        } catch {
+            searchResults = []
+        }
+    }
+
+    func clearSearch() {
+        searchText = ""
+        searchResults = []
     }
 
     func refresh() async {

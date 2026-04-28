@@ -16,10 +16,36 @@ struct StockListView: View {
 
     var body: some View {
         NavigationStack {
-            List(viewModel.stocks) { stock in
-                StockRowView(stock: stock, quote: viewModel.quote(for: stock))
+            List {
+                if viewModel.isSearchPresented,
+                   !viewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                {
+                    ForEach(viewModel.searchResults) { stock in
+                        StockSearchResultRowView(stock: stock)
+                    }
+                } else {
+                    ForEach(viewModel.stocks) { stock in
+                        StockRowView(stock: stock, quote: viewModel.quote(for: stock))
+                    }
+                }
             }
             .navigationTitle("Stocks")
+            .searchable(
+                text: $viewModel.searchText,
+                isPresented: $viewModel.isSearchPresented,
+                placement: .automatic,
+                prompt: "Search stocks",
+            )
+            .onChange(of: viewModel.searchText) {
+                Task {
+                    await viewModel.search()
+                }
+            }
+            .onChange(of: viewModel.isSearchPresented) { _, isSearchPresented in
+                if !isSearchPresented {
+                    viewModel.clearSearch()
+                }
+            }
             .task {
                 await viewModel.startPolling()
             }

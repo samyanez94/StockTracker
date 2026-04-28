@@ -29,7 +29,7 @@ enum AppFactory {
 
     static let stocks = [
         Stock(symbol: "AAPL", companyName: "Apple Inc."),
-        Stock(symbol: "MSFT", companyName: "Microsoft"),
-        Stock(symbol: "TSLA", companyName: "Tesla"),
+        Stock(symbol: "MSFT", companyName: "Microsoft Corporation"),
+        Stock(symbol: "TSLA", companyName: "Tesla, Inc."),
     ]
 }
