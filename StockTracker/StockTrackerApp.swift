@@ -11,7 +11,7 @@ import SwiftUI
 struct StockTrackerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            StockListView()
         }
     }
 }

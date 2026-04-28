@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  StockListView.swift
 //  StockTracker
 //
 //  Created by Samuel Yanez on 4/27/26.
@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct StockListView: View {
     @State private var viewModel = StockListViewModel()
 
     var body: some View {
         NavigationStack {
             List(viewModel.stocks) { stock in
-                StockRow(stock: stock, quote: viewModel.quote(for: stock))
+                StockRowView(stock: stock, quote: viewModel.quote(for: stock))
             }
             .navigationTitle("Stocks")
             .errorAlert(
@@ -58,5 +58,5 @@ private extension View {
 }
 
 #Preview {
-    ContentView()
+    StockListView()
 }

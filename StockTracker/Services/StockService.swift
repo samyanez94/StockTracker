@@ -32,7 +32,6 @@ struct StockService: StockServicing {
         guard let httpResponse = response as? HTTPURLResponse else {
             throw StockServiceError.invalidResponse
         }
-
         guard (200 ... 299).contains(httpResponse.statusCode) else {
             throw StockServiceError.badStatusCode(httpResponse.statusCode)
         }
