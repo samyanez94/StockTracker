@@ -8,7 +8,8 @@
 import Foundation
 
 struct Stock: Identifiable, Hashable {
-    let id = UUID()
+    var id: String { symbol }
+
     let symbol: String
     let companyName: String
 }
