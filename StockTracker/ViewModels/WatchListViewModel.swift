@@ -20,6 +20,18 @@ final class WatchListViewModel {
 
     var isSearchPresented = false
 
+    var sortOption: WatchListSortOption = .symbol {
+        didSet {
+            watchlistStore.saveSortOption(sortOption)
+        }
+    }
+
+    var sortDirection: WatchListSortDirection = .ascending {
+        didSet {
+            watchlistStore.saveSortDirection(sortDirection)
+        }
+    }
+
     private var symbols: [String] {
         stocks.map(\.symbol)
     }
@@ -27,6 +39,8 @@ final class WatchListViewModel {
     private let searchController: StockSearchController
 
     private let quoteRefreshController: QuoteRefreshController
+
+    private let watchListSorter: WatchListSorter
 
     private let watchlistStore: any WatchlistStoring
 
@@ -37,6 +51,7 @@ final class WatchListViewModel {
         searchDebounceDuration: Duration = .milliseconds(300),
         searchController: StockSearchController? = nil,
         quoteRefreshController: QuoteRefreshController? = nil,
+        watchListSorter: WatchListSorter = WatchListSorter(),
     ) {
         self.stocks = stocks
         self.searchController = searchController ?? StockSearchController(
@@ -46,11 +61,23 @@ final class WatchListViewModel {
         self.quoteRefreshController = quoteRefreshController ?? QuoteRefreshController(
             service: service,
         )
+        self.watchListSorter = watchListSorter
         self.watchlistStore = watchlistStore
+        self.sortOption = watchlistStore.loadSortOption() ?? .symbol
+        self.sortDirection = watchlistStore.loadSortDirection() ?? .ascending
     }
 
     func quote(for stock: Stock) -> Quote? {
         quotes[stock.symbol]
+    }
+
+    var sortedStocks: [Stock] {
+        watchListSorter.sortedStocks(
+            stocks,
+            quotes: quotes,
+            sortOption: sortOption,
+            sortDirection: sortDirection,
+        )
     }
 
     func isInWatchlist(_ stock: Stock) -> Bool {

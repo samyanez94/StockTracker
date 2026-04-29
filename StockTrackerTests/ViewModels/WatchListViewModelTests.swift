@@ -69,6 +69,58 @@ struct WatchListViewModelTests {
     }
 
     @Test
+    func `initial sort option loads from store`() {
+        let watchlistStore = MockWatchlistStore(savedSortOption: .name)
+        let viewModel = WatchListViewModel(
+            stocks: [],
+            service: MockStockService(),
+            watchlistStore: watchlistStore,
+        )
+
+        #expect(viewModel.sortOption == .name)
+    }
+
+    @Test
+    func `initial sort direction loads from store`() {
+        let watchlistStore = MockWatchlistStore(savedSortDirection: .descending)
+        let viewModel = WatchListViewModel(
+            stocks: [],
+            service: MockStockService(),
+            watchlistStore: watchlistStore,
+        )
+
+        #expect(viewModel.sortDirection == .descending)
+    }
+
+    @Test
+    func `sort option saves to store when changed`() {
+        let watchlistStore = MockWatchlistStore()
+        let viewModel = WatchListViewModel(
+            stocks: [],
+            service: MockStockService(),
+            watchlistStore: watchlistStore,
+        )
+
+        viewModel.sortOption = .percentageChange
+
+        #expect(watchlistStore.savedSortOption == .percentageChange)
+    }
+
+    @Test
+    func `sort direction saves to store when changed`() {
+        let watchlistStore = MockWatchlistStore()
+        let viewModel = WatchListViewModel(
+            stocks: [],
+            service: MockStockService(),
+            watchlistStore: watchlistStore,
+        )
+
+        viewModel.sortDirection = .descending
+
+        #expect(watchlistStore.savedSortDirection == .descending)
+    }
+
+    @Test
     func `search stores matching results separately from stocks`() async {
         let apple = Stock(symbol: "AAPL", companyName: "Apple Inc.")
         let microsoft = Stock(symbol: "MSFT", companyName: "Microsoft Corporation")
@@ -237,9 +289,17 @@ struct WatchListViewModelTests {
 
 private final class MockWatchlistStore: WatchlistStoring {
     var savedStocks: [Stock]
+    var savedSortOption: WatchListSortOption?
+    var savedSortDirection: WatchListSortDirection?
 
-    init(savedStocks: [Stock] = []) {
+    init(
+        savedStocks: [Stock] = [],
+        savedSortOption: WatchListSortOption? = nil,
+        savedSortDirection: WatchListSortDirection? = nil,
+    ) {
         self.savedStocks = savedStocks
+        self.savedSortOption = savedSortOption
+        self.savedSortDirection = savedSortDirection
     }
 
     func loadStocks() -> [Stock]? {
@@ -248,6 +308,22 @@ private final class MockWatchlistStore: WatchlistStoring {
 
     func saveStocks(_ stocks: [Stock]) {
         savedStocks = stocks
+    }
+
+    func loadSortOption() -> WatchListSortOption? {
+        savedSortOption
+    }
+
+    func saveSortOption(_ sortOption: WatchListSortOption) {
+        savedSortOption = sortOption
+    }
+
+    func loadSortDirection() -> WatchListSortDirection? {
+        savedSortDirection
+    }
+
+    func saveSortDirection(_ sortDirection: WatchListSortDirection) {
+        savedSortDirection = sortDirection
     }
 }
 

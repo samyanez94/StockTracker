@@ -31,7 +31,7 @@ struct WatchListView: View {
                         }
                     }
                 } else {
-                    ForEach(viewModel.stocks) { stock in
+                    ForEach(viewModel.sortedStocks) { stock in
                         StockRowView(stock: stock, quote: viewModel.quote(for: stock))
                             .swipeActions(edge: .trailing) {
                                 Button(role: .destructive) {
@@ -44,6 +44,25 @@ struct WatchListView: View {
                 }
             }
             .navigationTitle("Stocks")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Picker("Sort By", selection: $viewModel.sortOption) {
+                            ForEach(WatchListSortOption.allCases) { option in
+                                Text(option.title).tag(option)
+                            }
+                        }
+                        Picker("Direction", selection: $viewModel.sortDirection) {
+                            ForEach(WatchListSortDirection.allCases) { direction in
+                                Text(direction.title).tag(direction)
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "arrow.up.arrow.down")
+                    }
+                    .accessibilityLabel("Sort watchlist")
+                }
+            }
             .searchable(
                 text: $viewModel.searchText,
                 isPresented: $viewModel.isSearchPresented,

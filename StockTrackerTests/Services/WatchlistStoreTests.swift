@@ -40,6 +40,26 @@ struct WatchlistStoreTests {
         #expect(store.loadStocks() == [])
     }
 
+    @Test
+    func `save and load sort option`() {
+        let defaults = makeDefaults()
+        let store = WatchlistStore(defaults: defaults)
+
+        store.saveSortOption(.percentageChange)
+
+        #expect(store.loadSortOption() == .percentageChange)
+    }
+
+    @Test
+    func `save and load sort direction`() {
+        let defaults = makeDefaults()
+        let store = WatchlistStore(defaults: defaults)
+
+        store.saveSortDirection(.descending)
+
+        #expect(store.loadSortDirection() == .descending)
+    }
+
     private func makeDefaults() -> UserDefaults {
         let suiteName = "StockTrackerTests.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!

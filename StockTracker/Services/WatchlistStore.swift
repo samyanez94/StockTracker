@@ -11,6 +11,10 @@ import Foundation
 protocol WatchlistStoring {
     func loadStocks() -> [Stock]?
     func saveStocks(_ stocks: [Stock])
+    func loadSortOption() -> WatchListSortOption?
+    func saveSortOption(_ sortOption: WatchListSortOption)
+    func loadSortDirection() -> WatchListSortDirection?
+    func saveSortDirection(_ sortDirection: WatchListSortDirection)
 }
 
 struct WatchlistStore: WatchlistStoring {
@@ -18,12 +22,20 @@ struct WatchlistStore: WatchlistStoring {
 
     private let key: String
 
+    private let sortOptionKey: String
+
+    private let sortDirectionKey: String
+
     init(
         defaults: UserDefaults = .standard,
         key: String = "watchlist",
+        sortOptionKey: String = "watchlistSortOption",
+        sortDirectionKey: String = "watchlistSortDirection",
     ) {
         self.defaults = defaults
         self.key = key
+        self.sortOptionKey = sortOptionKey
+        self.sortDirectionKey = sortDirectionKey
     }
 
     func loadStocks() -> [Stock]? {
@@ -38,5 +50,27 @@ struct WatchlistStore: WatchlistStoring {
             return
         }
         defaults.set(data, forKey: key)
+    }
+
+    func loadSortOption() -> WatchListSortOption? {
+        guard let rawValue = defaults.string(forKey: sortOptionKey) else {
+            return nil
+        }
+        return WatchListSortOption(rawValue: rawValue)
+    }
+
+    func saveSortOption(_ sortOption: WatchListSortOption) {
+        defaults.set(sortOption.rawValue, forKey: sortOptionKey)
+    }
+
+    func loadSortDirection() -> WatchListSortDirection? {
+        guard let rawValue = defaults.string(forKey: sortDirectionKey) else {
+            return nil
+        }
+        return WatchListSortDirection(rawValue: rawValue)
+    }
+
+    func saveSortDirection(_ sortDirection: WatchListSortDirection) {
+        defaults.set(sortDirection.rawValue, forKey: sortDirectionKey)
     }
 }
