@@ -24,11 +24,9 @@ final class WatchListViewModel {
         stocks.map(\.symbol)
     }
 
-    private var isRefreshing = false
-
-    private let service: any StockServicing
-
     private let searchController: StockSearchController
+
+    private let quoteRefreshController: QuoteRefreshController
 
     private let watchlistStore: any WatchlistStoring
 
@@ -38,12 +36,15 @@ final class WatchListViewModel {
         watchlistStore: any WatchlistStoring,
         searchDebounceDuration: Duration = .milliseconds(300),
         searchController: StockSearchController? = nil,
+        quoteRefreshController: QuoteRefreshController? = nil,
     ) {
         self.stocks = stocks
-        self.service = service
         self.searchController = searchController ?? StockSearchController(
             service: service,
             debounceDuration: searchDebounceDuration,
+        )
+        self.quoteRefreshController = quoteRefreshController ?? QuoteRefreshController(
+            service: service,
         )
         self.watchlistStore = watchlistStore
     }
@@ -99,33 +100,15 @@ final class WatchListViewModel {
     }
 
     func refresh() async {
-        guard !isRefreshing else {
-            return
-        }
-        isRefreshing = true
-        defer {
-            isRefreshing = false
-        }
-        do {
-            let fetchedQuotes = try await service.fetch(
-                StockDataQuoteRequest(symbols: symbols),
-            )
-            updateQuotes(with: fetchedQuotes)
-        } catch {
-            return
+        if let quotes = await quoteRefreshController.refresh(symbols: symbols) {
+            self.quotes = quotes
         }
     }
 
     func startPolling() async {
-        while !Task.isCancelled {
-            await refresh()
-            try? await Task.sleep(for: .seconds(60))
-        }
-    }
-
-    private func updateQuotes(with fetchedQuotes: [Quote]) {
-        quotes = Dictionary(
-            uniqueKeysWithValues: fetchedQuotes.map { ($0.symbol, $0) },
+        await quoteRefreshController.startPolling(
+            symbols: { self.symbols },
+            update: { self.quotes = $0 },
         )
     }
 
