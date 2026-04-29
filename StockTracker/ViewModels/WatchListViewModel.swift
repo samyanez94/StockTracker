@@ -63,8 +63,8 @@ final class WatchListViewModel {
         )
         self.watchListSorter = watchListSorter
         self.watchlistStore = watchlistStore
-        self.sortOption = watchlistStore.loadSortOption() ?? .symbol
-        self.sortDirection = watchlistStore.loadSortDirection() ?? .ascending
+        sortOption = watchlistStore.loadSortOption() ?? .symbol
+        sortDirection = watchlistStore.loadSortDirection() ?? .ascending
     }
 
     func quote(for stock: Stock) -> Quote? {
