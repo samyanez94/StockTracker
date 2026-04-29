@@ -7,7 +7,7 @@
 
 import Foundation
 
-nonisolated struct Stock: Identifiable, Hashable {
+nonisolated struct Stock: Codable, Identifiable, Hashable {
     var id: String {
         symbol
     }

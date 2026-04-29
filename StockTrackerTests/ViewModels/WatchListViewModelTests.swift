@@ -1,5 +1,5 @@
 //
-//  StockListViewModelTests.swift
+//  WatchListViewModelTests.swift
 //  StockTrackerTests
 //
 //  Created by Samuel Yanez on 4/28/26.
@@ -10,14 +10,15 @@ import Foundation
 import Testing
 
 @MainActor
-struct StockListViewModelTests {
+struct WatchListViewModelTests {
     @Test
     func `refresh stores fetched quotes`() async {
         let stock = Stock(symbol: "AAPL", companyName: "Apple Inc.")
         let quote = Quote(symbol: "AAPL", price: 204.18, percentChange: 0.62)
-        let viewModel = StockListViewModel(
+        let viewModel = WatchListViewModel(
             stocks: [stock],
             service: MockStockService(quotes: [quote]),
+            watchlistStore: MockWatchlistStore(),
         )
 
         await viewModel.refresh()
@@ -31,9 +32,10 @@ struct StockListViewModelTests {
     func `failed refresh preserves existing quotes`() async {
         let stock = Stock(symbol: "AAPL", companyName: "Apple Inc.")
         let quote = Quote(symbol: "AAPL", price: 204.18, percentChange: 0.62)
-        let viewModel = StockListViewModel(
+        let viewModel = WatchListViewModel(
             stocks: [stock],
             service: MockStockService(error: TestError.fetchFailed),
+            watchlistStore: MockWatchlistStore(),
         )
         viewModel.quotes = [quote.symbol: quote]
 
@@ -48,7 +50,11 @@ struct StockListViewModelTests {
         let stock = Stock(symbol: "AAPL", companyName: "Apple Inc.")
         let quote = Quote(symbol: "AAPL", price: 204.18, percentChange: 0.62)
         let service = MockStockService(quotes: [quote], delay: .milliseconds(100))
-        let viewModel = StockListViewModel(stocks: [stock], service: service)
+        let viewModel = WatchListViewModel(
+            stocks: [stock],
+            service: service,
+            watchlistStore: MockWatchlistStore(),
+        )
 
         let firstRefresh = Task {
             await viewModel.refresh()
@@ -67,7 +73,11 @@ struct StockListViewModelTests {
         let apple = Stock(symbol: "AAPL", companyName: "Apple Inc.")
         let microsoft = Stock(symbol: "MSFT", companyName: "Microsoft Corporation")
         let service = MockStockService(searchResults: [apple, microsoft])
-        let viewModel = StockListViewModel(stocks: [apple], service: service)
+        let viewModel = WatchListViewModel(
+            stocks: [apple],
+            service: service,
+            watchlistStore: MockWatchlistStore(),
+        )
 
         viewModel.searchText = "micro"
         await viewModel.search()
@@ -80,7 +90,11 @@ struct StockListViewModelTests {
     func `clearing search removes search results and preserves stocks`() {
         let apple = Stock(symbol: "AAPL", companyName: "Apple Inc.")
         let microsoft = Stock(symbol: "MSFT", companyName: "Microsoft Corporation")
-        let viewModel = StockListViewModel(stocks: [apple], service: MockStockService())
+        let viewModel = WatchListViewModel(
+            stocks: [apple],
+            service: MockStockService(),
+            watchlistStore: MockWatchlistStore(),
+        )
         viewModel.searchText = "micro"
         viewModel.searchResults = [microsoft]
 
@@ -92,24 +106,48 @@ struct StockListViewModelTests {
     }
 
     @Test
-    func `toggle watchlist membership adds stock when missing and refreshes quotes`() async {
+    func `add to watchlist adds stock and refreshes quotes`() async {
         let apple = Stock(symbol: "AAPL", companyName: "Apple Inc.")
         let microsoft = Stock(symbol: "MSFT", companyName: "Microsoft Corporation")
         let quote = Quote(symbol: "MSFT", price: 391.44, percentChange: 0.34)
         let service = MockStockService(quotes: [quote])
-        let viewModel = StockListViewModel(stocks: [apple], service: service)
+        let watchlistStore = MockWatchlistStore()
+        let viewModel = WatchListViewModel(
+            stocks: [apple],
+            service: service,
+            watchlistStore: watchlistStore,
+        )
 
-        await viewModel.toggleWatchlistMembership(for: microsoft)
+        await viewModel.addToWatchlist(microsoft)
 
         #expect(viewModel.stocks == [apple, microsoft])
         #expect(viewModel.isInWatchlist(microsoft))
         #expect(viewModel.quote(for: microsoft)?.price == 391.44)
+        #expect(watchlistStore.savedStocks == [apple, microsoft])
+    }
+
+    @Test
+    func `add to watchlist ignores stock already present`() async {
+        let apple = Stock(symbol: "AAPL", companyName: "Apple Inc.")
+        let viewModel = WatchListViewModel(
+            stocks: [apple],
+            service: MockStockService(),
+            watchlistStore: MockWatchlistStore(),
+        )
+
+        await viewModel.addToWatchlist(apple)
+
+        #expect(viewModel.stocks == [apple])
     }
 
     @Test
     func `toggle watchlist membership removes stock when present`() async {
         let apple = Stock(symbol: "AAPL", companyName: "Apple Inc.")
-        let viewModel = StockListViewModel(stocks: [apple], service: MockStockService())
+        let viewModel = WatchListViewModel(
+            stocks: [apple],
+            service: MockStockService(),
+            watchlistStore: MockWatchlistStore(),
+        )
         viewModel.quotes = [
             "AAPL": Quote(symbol: "AAPL", price: 204.18, percentChange: 0.62),
         ]
@@ -124,7 +162,12 @@ struct StockListViewModelTests {
     @Test
     func `remove from watchlist removes stock and quote`() {
         let apple = Stock(symbol: "AAPL", companyName: "Apple Inc.")
-        let viewModel = StockListViewModel(stocks: [apple], service: MockStockService())
+        let watchlistStore = MockWatchlistStore()
+        let viewModel = WatchListViewModel(
+            stocks: [apple],
+            service: MockStockService(),
+            watchlistStore: watchlistStore,
+        )
         viewModel.quotes = [
             "AAPL": Quote(symbol: "AAPL", price: 204.18, percentChange: 0.62),
         ]
@@ -133,6 +176,23 @@ struct StockListViewModelTests {
 
         #expect(viewModel.stocks.isEmpty)
         #expect(viewModel.quote(for: apple) == nil)
+        #expect(watchlistStore.savedStocks.isEmpty)
+    }
+}
+
+private final class MockWatchlistStore: WatchlistStoring {
+    var savedStocks: [Stock]
+
+    init(savedStocks: [Stock] = []) {
+        self.savedStocks = savedStocks
+    }
+
+    func loadStocks() -> [Stock]? {
+        savedStocks
+    }
+
+    func saveStocks(_ stocks: [Stock]) {
+        savedStocks = stocks
     }
 }
 

@@ -1,5 +1,5 @@
 //
-//  StockListViewModel.swift
+//  WatchListViewModel.swift
 //  StockTracker
 //
 //  Created by Samuel Yanez on 4/27/26.
@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 @Observable
-final class StockListViewModel {
+final class WatchListViewModel {
     var stocks: [Stock]
 
     var searchResults: [Stock] = []
@@ -28,12 +28,16 @@ final class StockListViewModel {
 
     private let service: any StockServicing
 
+    private let watchlistStore: any WatchlistStoring
+
     init(
         stocks: [Stock],
         service: any StockServicing,
+        watchlistStore: any WatchlistStoring,
     ) {
         self.stocks = stocks
         self.service = service
+        self.watchlistStore = watchlistStore
     }
 
     func quote(for stock: Stock) -> Quote? {
@@ -48,14 +52,23 @@ final class StockListViewModel {
         if isInWatchlist(stock) {
             removeFromWatchlist(stock)
         } else {
-            stocks.append(stock)
-            await refresh()
+            await addToWatchlist(stock)
         }
+    }
+
+    func addToWatchlist(_ stock: Stock) async {
+        guard !isInWatchlist(stock) else {
+            return
+        }
+        stocks.append(stock)
+        saveWatchlist()
+        await refresh()
     }
 
     func removeFromWatchlist(_ stock: Stock) {
         stocks.removeAll { $0.symbol == stock.symbol }
         quotes[stock.symbol] = nil
+        saveWatchlist()
     }
 
     func search() async {
@@ -110,5 +123,9 @@ final class StockListViewModel {
         quotes = Dictionary(
             uniqueKeysWithValues: fetchedQuotes.map { ($0.symbol, $0) },
         )
+    }
+
+    private func saveWatchlist() {
+        watchlistStore.saveStocks(stocks)
     }
 }

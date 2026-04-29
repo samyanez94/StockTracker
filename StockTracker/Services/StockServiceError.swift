@@ -10,6 +10,7 @@ import Foundation
 enum StockServiceError: Error {
     case invalidURL
     case invalidResponse
+    case missingAPIKey
     case badStatusCode(Int)
 }
 
@@ -20,6 +21,8 @@ extension StockServiceError: LocalizedError {
             "We couldn't create the request."
         case .invalidResponse:
             "We couldn't read the server response."
+        case .missingAPIKey:
+            "We couldn't find the API key."
         case .badStatusCode:
             "We couldn't load the latest prices."
         }

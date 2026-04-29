@@ -1,5 +1,5 @@
 //
-//  StockListView.swift
+//  WatchListView.swift
 //  StockTracker
 //
 //  Created by Samuel Yanez on 4/27/26.
@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct StockListView: View {
-    @State private var viewModel: StockListViewModel
+struct WatchListView: View {
+    @State private var viewModel: WatchListViewModel
 
-    init(viewModel: StockListViewModel) {
+    init(viewModel: WatchListViewModel) {
         self.viewModel = viewModel
     }
 
@@ -71,10 +71,11 @@ struct StockListView: View {
 }
 
 #Preview {
-    StockListView(
-        viewModel: StockListViewModel(
+    WatchListView(
+        viewModel: WatchListViewModel(
             stocks: AppFactory.stocks,
             service: StockService(usesMockData: true),
+            watchlistStore: WatchlistStore(),
         ),
     )
 }

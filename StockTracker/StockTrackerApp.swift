@@ -11,18 +11,21 @@ import SwiftUI
 struct StockTrackerApp: App {
     var body: some Scene {
         WindowGroup {
-            AppFactory.makeStockListView()
+            AppFactory.makeWatchListView()
         }
     }
 }
 
 enum AppFactory {
     @MainActor
-    static func makeStockListView() -> StockListView {
-        StockListView(
-            viewModel: StockListViewModel(
-                stocks: stocks,
+    static func makeWatchListView() -> WatchListView {
+        let watchlistStore = WatchlistStore()
+        let savedStocks = watchlistStore.loadStocks()
+        return WatchListView(
+            viewModel: WatchListViewModel(
+                stocks: savedStocks ?? stocks,
                 service: StockService(usesMockData: true),
+                watchlistStore: watchlistStore,
             ),
         )
     }

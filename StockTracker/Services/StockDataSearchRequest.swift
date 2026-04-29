@@ -16,6 +16,10 @@ nonisolated struct StockDataSearchRequest: StockRequest {
 
     var url: URL {
         get throws {
+            let apiKey = Secrets.stockDataAPIKey
+            guard !apiKey.isEmpty else {
+                throw StockServiceError.missingAPIKey
+            }
             guard let endpoint = URL(string: Self.endpoint) else {
                 throw StockServiceError.invalidURL
             }
@@ -30,7 +34,7 @@ nonisolated struct StockDataSearchRequest: StockRequest {
                 ),
                 URLQueryItem(
                     name: "api_token",
-                    value: Secrets.stockDataAPIKey,
+                    value: apiKey,
                 ),
             ]
             guard let url = components?.url else {
