@@ -77,6 +77,7 @@ struct WatchListViewModelTests {
             stocks: [apple],
             service: service,
             watchlistStore: MockWatchlistStore(),
+            searchDebounceDuration: .zero,
         )
 
         viewModel.searchText = "micro"
@@ -84,6 +85,60 @@ struct WatchListViewModelTests {
 
         #expect(viewModel.stocks == [apple])
         #expect(viewModel.searchResults == [microsoft])
+    }
+
+    @Test
+    func `search cancels pending search when query changes`() async {
+        let apple = Stock(symbol: "AAPL", companyName: "Apple Inc.")
+        let microsoft = Stock(symbol: "MSFT", companyName: "Microsoft Corporation")
+        let service = MockStockService(searchResults: [apple, microsoft])
+        let viewModel = WatchListViewModel(
+            stocks: [apple],
+            service: service,
+            watchlistStore: MockWatchlistStore(),
+            searchDebounceDuration: .milliseconds(100),
+        )
+
+        viewModel.searchText = "app"
+        let firstSearch = Task {
+            await viewModel.search()
+        }
+        await Task.yield()
+
+        viewModel.searchText = "micro"
+        await viewModel.search()
+        await firstSearch.value
+
+        let fetchCount = await service.fetchCount
+        #expect(fetchCount == 1)
+        #expect(viewModel.searchResults == [microsoft])
+    }
+
+    @Test
+    func `empty search cancels pending search and clears results`() async {
+        let apple = Stock(symbol: "AAPL", companyName: "Apple Inc.")
+        let service = MockStockService(searchResults: [apple])
+        let viewModel = WatchListViewModel(
+            stocks: [apple],
+            service: service,
+            watchlistStore: MockWatchlistStore(),
+            searchDebounceDuration: .milliseconds(100),
+        )
+        viewModel.searchResults = [apple]
+
+        viewModel.searchText = "app"
+        let pendingSearch = Task {
+            await viewModel.search()
+        }
+        await Task.yield()
+
+        viewModel.searchText = ""
+        await viewModel.search()
+        await pendingSearch.value
+
+        let fetchCount = await service.fetchCount
+        #expect(fetchCount == 0)
+        #expect(viewModel.searchResults.isEmpty)
     }
 
     @Test

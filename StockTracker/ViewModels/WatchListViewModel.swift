@@ -28,15 +28,23 @@ final class WatchListViewModel {
 
     private let service: any StockServicing
 
+    private let searchController: StockSearchController
+
     private let watchlistStore: any WatchlistStoring
 
     init(
         stocks: [Stock],
         service: any StockServicing,
         watchlistStore: any WatchlistStoring,
+        searchDebounceDuration: Duration = .milliseconds(300),
+        searchController: StockSearchController? = nil,
     ) {
         self.stocks = stocks
         self.service = service
+        self.searchController = searchController ?? StockSearchController(
+            service: service,
+            debounceDuration: searchDebounceDuration,
+        )
         self.watchlistStore = watchlistStore
     }
 
@@ -74,22 +82,18 @@ final class WatchListViewModel {
     func search() async {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else {
+            searchController.cancel()
             searchResults = []
             return
         }
-        do {
-            let searchResults = try await service.fetch(
-                StockDataSearchRequest(query: query),
-            )
-            if query == searchText.trimmingCharacters(in: .whitespacesAndNewlines) {
-                self.searchResults = searchResults
-            }
-        } catch {
-            searchResults = []
+        let searchResults = await searchController.search(query: query)
+        if query == searchText.trimmingCharacters(in: .whitespacesAndNewlines) {
+            self.searchResults = searchResults
         }
     }
 
     func clearSearch() {
+        searchController.cancel()
         searchText = ""
         searchResults = []
     }
