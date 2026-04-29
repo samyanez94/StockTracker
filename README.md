@@ -15,3 +15,7 @@ STOCKDATA_API_KEY = your_api_key_here
 ```
 
 `Config/Debug.xcconfig` and `Config/Release.xcconfig` include this local secrets file when it exists. When developing without live API calls, the app can use local mock data instead.
+
+## Screenshots
+
+<img src="https://i.imgur.com/Dieraga.png" width="400"/>
