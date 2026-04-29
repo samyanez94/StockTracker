@@ -1,5 +1,5 @@
 //
-//  StockDataQuotesResponse.swift
+//  StockDataQuoteResponse.swift
 //  StockTracker
 //
 //  Created by Samuel Yanez on 4/27/26.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct StockDataQuotesResponse: Decodable {
+struct StockDataQuoteResponse: Decodable {
     let data: [StockDataQuote]
 
     var quotes: [Quote] {
@@ -37,7 +37,7 @@ extension StockDataQuote {
     }
 }
 
-extension StockDataQuotesResponse {
+extension StockDataQuoteResponse {
     private static let mockQuotes = [
         "AAPL": StockDataQuote(ticker: "AAPL", price: 204.18, dayChange: Double.random(in: -1 ... 1)),
         "AMZN": StockDataQuote(ticker: "AMZN", price: 186.54, dayChange: Double.random(in: -1 ... 1)),
@@ -49,6 +49,6 @@ extension StockDataQuotesResponse {
     ]
 
     static func mock(for symbols: [String]) -> Self {
-        StockDataQuotesResponse(data: symbols.compactMap { mockQuotes[$0] })
+        StockDataQuoteResponse(data: symbols.compactMap { mockQuotes[$0] })
     }
 }

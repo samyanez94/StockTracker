@@ -5,8 +5,8 @@
 //  Created by Samuel Yanez on 4/28/26.
 //
 
-@testable import StockTracker
 import Foundation
+@testable import StockTracker
 import Testing
 
 @MainActor

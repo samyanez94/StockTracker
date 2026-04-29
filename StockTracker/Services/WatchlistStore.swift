@@ -15,7 +15,7 @@ protocol WatchlistStoring {
 
 struct WatchlistStore: WatchlistStoring {
     private let defaults: UserDefaults
-    
+
     private let key: String
 
     init(

@@ -1,5 +1,5 @@
 //
-//  StockDataQuotesRequestTests.swift
+//  StockDataQuoteRequestTests.swift
 //  StockTrackerTests
 //
 //  Created by Samuel Yanez on 4/27/26.
@@ -9,11 +9,11 @@ import Foundation
 @testable import StockTracker
 import Testing
 
-struct StockDataQuotesRequestTests {
+struct StockDataQuoteRequestTests {
     @Test
     func `url includes endpoint and query items`() throws {
         let apiKey = "test-api-key"
-        let request = StockDataQuotesRequest(symbols: ["AAPL", "MSFT"])
+        let request = StockDataQuoteRequest(symbols: ["AAPL", "MSFT"])
         let url = try request.url(apiKey: apiKey)
         let components = try #require(
             URLComponents(url: url, resolvingAgainstBaseURL: false),
@@ -27,7 +27,7 @@ struct StockDataQuotesRequestTests {
 
     @Test
     func `url throws missing API key when API key is empty`() {
-        let request = StockDataQuotesRequest(symbols: ["AAPL"])
+        let request = StockDataQuoteRequest(symbols: ["AAPL"])
 
         do {
             _ = try request.url(apiKey: "")
@@ -51,7 +51,7 @@ struct StockDataQuotesRequestTests {
             ]
         }
         """
-        let request = StockDataQuotesRequest(symbols: ["AAPL"])
+        let request = StockDataQuoteRequest(symbols: ["AAPL"])
         let quotes = try request.decode(Data(json.utf8))
         #expect(quotes.count == 1)
         #expect(quotes.first?.symbol == "AAPL")

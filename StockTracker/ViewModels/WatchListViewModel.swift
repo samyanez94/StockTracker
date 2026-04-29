@@ -108,7 +108,7 @@ final class WatchListViewModel {
         }
         do {
             let fetchedQuotes = try await service.fetch(
-                StockDataQuotesRequest(symbols: symbols),
+                StockDataQuoteRequest(symbols: symbols),
             )
             updateQuotes(with: fetchedQuotes)
         } catch {

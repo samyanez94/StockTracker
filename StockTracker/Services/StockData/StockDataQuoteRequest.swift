@@ -1,5 +1,5 @@
 //
-//  StockDataQuotesRequest.swift
+//  StockDataQuoteRequest.swift
 //  StockTracker
 //
 //  Created by Samuel Yanez on 4/27/26.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct StockDataQuotesRequest: StockRequest {
+struct StockDataQuoteRequest: StockRequest {
     typealias Response = [Quote]
 
     private static let endpoint = "https://api.stockdata.org/v1/data/quote"
@@ -43,13 +43,13 @@ struct StockDataQuotesRequest: StockRequest {
 
     func decode(_ data: Data) throws -> [Quote] {
         let response = try JSONDecoder().decode(
-            StockDataQuotesResponse.self,
+            StockDataQuoteResponse.self,
             from: data,
         )
         return response.quotes
     }
 
     func mockResponse() -> [Quote]? {
-        StockDataQuotesResponse.mock(for: symbols).quotes
+        StockDataQuoteResponse.mock(for: symbols).quotes
     }
 }

@@ -10,11 +10,12 @@ import Testing
 
 struct StockServiceTests {
     @Test
+    @MainActor
     func `mock mode does not require API key`() async throws {
         let service = StockService(usesMockData: true, apiKey: "")
 
         let quotes = try await service.fetch(
-            StockDataQuotesRequest(symbols: ["AAPL"]),
+            StockDataQuoteRequest(symbols: ["AAPL"]),
         )
 
         #expect(quotes.count == 1)
@@ -22,12 +23,13 @@ struct StockServiceTests {
     }
 
     @Test
+    @MainActor
     func `network mode requires API key`() async {
         let service = StockService(usesMockData: false, apiKey: "")
 
         do {
             _ = try await service.fetch(
-                StockDataQuotesRequest(symbols: ["AAPL"]),
+                StockDataQuoteRequest(symbols: ["AAPL"]),
             )
             Issue.record("Expected fetch to throw.")
         } catch StockServiceError.missingAPIKey {
