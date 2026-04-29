@@ -14,34 +14,31 @@ struct StockDataQuotesRequest: StockRequest {
 
     let symbols: [String]
 
-    var url: URL {
-        get throws {
-            let apiKey = Secrets.stockDataAPIKey
-            guard !apiKey.isEmpty else {
-                throw StockServiceError.missingAPIKey
-            }
-            guard let endpoint = URL(string: Self.endpoint) else {
-                throw StockServiceError.invalidURL
-            }
-            var components = URLComponents(
-                url: endpoint,
-                resolvingAgainstBaseURL: false,
-            )
-            components?.queryItems = [
-                URLQueryItem(
-                    name: "symbols",
-                    value: symbols.joined(separator: ","),
-                ),
-                URLQueryItem(
-                    name: "api_token",
-                    value: apiKey,
-                ),
-            ]
-            guard let url = components?.url else {
-                throw StockServiceError.invalidURL
-            }
-            return url
+    func url(apiKey: String) throws -> URL {
+        guard !apiKey.isEmpty else {
+            throw StockServiceError.missingAPIKey
         }
+        guard let endpoint = URL(string: Self.endpoint) else {
+            throw StockServiceError.invalidURL
+        }
+        var components = URLComponents(
+            url: endpoint,
+            resolvingAgainstBaseURL: false,
+        )
+        components?.queryItems = [
+            URLQueryItem(
+                name: "symbols",
+                value: symbols.joined(separator: ","),
+            ),
+            URLQueryItem(
+                name: "api_token",
+                value: apiKey,
+            ),
+        ]
+        guard let url = components?.url else {
+            throw StockServiceError.invalidURL
+        }
+        return url
     }
 
     func decode(_ data: Data) throws -> [Quote] {

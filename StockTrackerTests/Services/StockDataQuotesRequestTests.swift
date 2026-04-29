@@ -12,8 +12,9 @@ import Testing
 struct StockDataQuotesRequestTests {
     @Test
     func `url includes endpoint and query items`() throws {
+        let apiKey = "test-api-key"
         let request = StockDataQuotesRequest(symbols: ["AAPL", "MSFT"])
-        let url = try request.url
+        let url = try request.url(apiKey: apiKey)
         let components = try #require(
             URLComponents(url: url, resolvingAgainstBaseURL: false),
         )
@@ -21,7 +22,20 @@ struct StockDataQuotesRequestTests {
         #expect(components.host == "api.stockdata.org")
         #expect(components.path == "/v1/data/quote")
         #expect(components.queryValue(named: "symbols") == "AAPL,MSFT")
-        #expect(components.queryValue(named: "api_token") == Secrets.stockDataAPIKey)
+        #expect(components.queryValue(named: "api_token") == apiKey)
+    }
+
+    @Test
+    func `url throws missing API key when API key is empty`() {
+        let request = StockDataQuotesRequest(symbols: ["AAPL"])
+
+        do {
+            _ = try request.url(apiKey: "")
+            Issue.record("Expected request URL creation to throw.")
+        } catch StockServiceError.missingAPIKey {
+        } catch {
+            Issue.record("Expected missing API key error, got \(error).")
+        }
     }
 
     @Test

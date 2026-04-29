@@ -10,7 +10,7 @@ import Foundation
 protocol StockRequest {
     associatedtype Response
 
-    var url: URL { get throws }
+    func url(apiKey: String) throws -> URL
 
     func decode(_ data: Data) throws -> Response
 

@@ -14,34 +14,31 @@ nonisolated struct StockDataSearchRequest: StockRequest {
 
     let query: String
 
-    var url: URL {
-        get throws {
-            let apiKey = Secrets.stockDataAPIKey
-            guard !apiKey.isEmpty else {
-                throw StockServiceError.missingAPIKey
-            }
-            guard let endpoint = URL(string: Self.endpoint) else {
-                throw StockServiceError.invalidURL
-            }
-            var components = URLComponents(
-                url: endpoint,
-                resolvingAgainstBaseURL: false,
-            )
-            components?.queryItems = [
-                URLQueryItem(
-                    name: "search",
-                    value: query,
-                ),
-                URLQueryItem(
-                    name: "api_token",
-                    value: apiKey,
-                ),
-            ]
-            guard let url = components?.url else {
-                throw StockServiceError.invalidURL
-            }
-            return url
+    func url(apiKey: String) throws -> URL {
+        guard !apiKey.isEmpty else {
+            throw StockServiceError.missingAPIKey
         }
+        guard let endpoint = URL(string: Self.endpoint) else {
+            throw StockServiceError.invalidURL
+        }
+        var components = URLComponents(
+            url: endpoint,
+            resolvingAgainstBaseURL: false,
+        )
+        components?.queryItems = [
+            URLQueryItem(
+                name: "search",
+                value: query,
+            ),
+            URLQueryItem(
+                name: "api_token",
+                value: apiKey,
+            ),
+        ]
+        guard let url = components?.url else {
+            throw StockServiceError.invalidURL
+        }
+        return url
     }
 
     func decode(_ data: Data) throws -> [Stock] {

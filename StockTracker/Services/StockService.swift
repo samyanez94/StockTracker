@@ -13,16 +13,21 @@ protocol StockServicing {
 
 struct StockService: StockServicing {
     private let usesMockData: Bool
+    private let apiKey: String
 
-    init(usesMockData: Bool = false) {
+    init(
+        usesMockData: Bool = false,
+        apiKey: String = Secrets.stockDataAPIKey,
+    ) {
         self.usesMockData = usesMockData
+        self.apiKey = apiKey
     }
 
     func fetch<Request: StockRequest>(_ request: Request) async throws -> Request.Response {
         if usesMockData, let mockResponse = request.mockResponse() {
             return mockResponse
         }
-        let (data, response) = try await URLSession.shared.data(from: request.url)
+        let (data, response) = try await URLSession.shared.data(from: request.url(apiKey: apiKey))
         try validate(response)
 
         return try request.decode(data)
