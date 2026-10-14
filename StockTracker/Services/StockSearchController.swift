@@ -7,6 +7,9 @@
 
 import Foundation
 
+/// Debounces stock searches and manages cancellation of the previous search task.
+///
+/// Search failures are represented as empty results rather than thrown errors.
 @MainActor
 final class StockSearchController {
     private var searchTask: Task<[Stock], Never>?
@@ -15,6 +18,10 @@ final class StockSearchController {
 
     private let debounceDuration: Duration
 
+    /// Creates a controller using the supplied service and debounce interval.
+    /// - Parameters:
+    ///   - service: The service used to fetch matching stocks.
+    ///   - debounceDuration: How long to wait before fetching, defaulting to 300 milliseconds.
     init(
         service: any StockServicing,
         debounceDuration: Duration = .milliseconds(300),
@@ -23,6 +30,11 @@ final class StockSearchController {
         self.debounceDuration = debounceDuration
     }
 
+    /// Cancels the previous search and fetches matches after the debounce interval.
+    /// - Parameter query: The search text. Callers are responsible for trimming whitespace.
+    /// - Returns: Matching stocks, or an empty array for an empty query or a thrown error,
+    ///   including cancellation. Callers should verify the query is still current before
+    ///   displaying results, since cancellation is cooperative.
     func search(query: String) async -> [Stock] {
         searchTask?.cancel()
 
@@ -36,9 +48,7 @@ final class StockSearchController {
             do {
                 try await Task.sleep(for: debounceDuration)
                 try Task.checkCancellation()
-                return try await service.fetch(
-                    StockDataSearchRequest(query: query),
-                )
+                return try await service.searchStocks(query: query)
             } catch is CancellationError {
                 return []
             } catch {
@@ -49,6 +59,7 @@ final class StockSearchController {
         return await task.value
     }
 
+    /// Requests cancellation of the current search task and releases its handle.
     func cancel() {
         searchTask?.cancel()
         searchTask = nil

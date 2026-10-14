@@ -9,10 +9,10 @@ import Foundation
 
 struct AppConfiguration {
     let usesMockData: Bool
-    let stockDataAPIKey: String
+    let twelveDataAPIKey: String
 
     static let current = AppConfiguration(
         usesMockData: true,
-        stockDataAPIKey: Secrets.stockDataAPIKey,
+        twelveDataAPIKey: Secrets.twelveDataAPIKey,
     )
 }

@@ -346,7 +346,20 @@ private actor MockStockService: StockServicing {
         self.delay = delay
     }
 
-    func fetch<Request: StockRequest>(_ request: Request) async throws -> Request.Response {
+    func fetchQuotes(symbols: [String]) async throws -> [Quote] {
+        try await prepareResponse()
+        return quotes
+    }
+
+    func searchStocks(query: String) async throws -> [Stock] {
+        try await prepareResponse()
+        return searchResults.filter {
+            $0.symbol.localizedCaseInsensitiveContains(query)
+                || $0.companyName.localizedCaseInsensitiveContains(query)
+        }
+    }
+
+    private func prepareResponse() async throws {
         fetchCount += 1
         if delay > .zero {
             try await Task.sleep(for: delay)
@@ -354,22 +367,9 @@ private actor MockStockService: StockServicing {
         if let error {
             throw error
         }
-        if let request = request as? StockDataSearchRequest,
-           let response = searchResults.filter({
-               $0.symbol.localizedCaseInsensitiveContains(request.query)
-                   || $0.companyName.localizedCaseInsensitiveContains(request.query)
-           }) as? Request.Response
-        {
-            return response
-        }
-        guard let response = quotes as? Request.Response else {
-            throw TestError.unexpectedResponseType
-        }
-        return response
     }
 }
 
 private enum TestError: Error {
     case fetchFailed
-    case unexpectedResponseType
 }
