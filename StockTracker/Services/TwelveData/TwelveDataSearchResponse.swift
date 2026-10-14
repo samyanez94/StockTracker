@@ -8,7 +8,6 @@
 import Foundation
 
 nonisolated struct TwelveDataSearchResponse: Decodable {
-
     let data: [TwelveDataSearchResult]
 
     var stocks: [Stock] {
@@ -16,9 +15,9 @@ nonisolated struct TwelveDataSearchResponse: Decodable {
         var seen: Set<String> = []
         return data.filter {
             $0.country == "United States" &&
-            $0.currency == "USD" &&
-            $0.instrumentType == "Common Stock" &&
-            seen.insert($0.symbol).inserted
+                $0.currency == "USD" &&
+                $0.instrumentType == "Common Stock" &&
+                seen.insert($0.symbol).inserted
         }
         .map {
             Stock(symbol: $0.symbol, companyName: $0.instrumentName)

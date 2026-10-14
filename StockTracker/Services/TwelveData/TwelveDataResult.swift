@@ -7,7 +7,7 @@
 
 import Foundation
 
-// Twelve Data can return an error envelope even when the HTTP request succeeds.
+/// Twelve Data can return an error envelope even when the HTTP request succeeds.
 nonisolated enum TwelveDataResult<Value: Decodable>: Decodable {
     case success(Value)
     case failure(code: Int, message: String)
@@ -19,12 +19,12 @@ nonisolated enum TwelveDataResult<Value: Decodable>: Decodable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if try container.decodeIfPresent(String.self, forKey: .status) == "error" {
-            self = .failure(
-                code: try container.decode(Int.self, forKey: .code),
-                message: try container.decode(String.self, forKey: .message),
+            self = try .failure(
+                code: container.decode(Int.self, forKey: .code),
+                message: container.decode(String.self, forKey: .message)
             )
         } else {
-            self = .success(try Value(from: decoder))
+            self = try .success(Value(from: decoder))
         }
     }
 

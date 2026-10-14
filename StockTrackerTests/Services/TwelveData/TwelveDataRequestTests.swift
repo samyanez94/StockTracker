@@ -119,5 +119,4 @@ struct TwelveDataRequestTests {
             try await StockService(usesMockData: true, apiKey: "").fetchQuotes(symbols: ["UNKNOWN"])
         }
     }
-
 }

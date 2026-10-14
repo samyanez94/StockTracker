@@ -7,9 +7,8 @@
 
 import Foundation
 
-// Synthetic, stable values encoded in the provider's JSON shape, then decoded normally.
+/// Synthetic, stable values encoded in the provider's JSON shape, then decoded normally.
 nonisolated enum TwelveDataMockData {
-
     static let stocks = [
         Stock(symbol: "AAPL", companyName: "Apple Inc."),
         Stock(symbol: "AMZN", companyName: "Amazon.com, Inc."),
@@ -37,7 +36,7 @@ nonisolated enum TwelveDataMockData {
         return [
             "symbol": symbol,
             "close": quote.price,
-            "percent_change": quote.change
+            "percent_change": quote.change,
         ]
     }
 }

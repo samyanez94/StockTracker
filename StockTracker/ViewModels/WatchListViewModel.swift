@@ -51,15 +51,15 @@ final class WatchListViewModel {
         searchDebounceDuration: Duration = .milliseconds(300),
         searchController: StockSearchController? = nil,
         quoteRefreshController: QuoteRefreshController? = nil,
-        watchListSorter: WatchListSorter = WatchListSorter(),
+        watchListSorter: WatchListSorter = WatchListSorter()
     ) {
         self.stocks = stocks
         self.searchController = searchController ?? StockSearchController(
             service: service,
-            debounceDuration: searchDebounceDuration,
+            debounceDuration: searchDebounceDuration
         )
         self.quoteRefreshController = quoteRefreshController ?? QuoteRefreshController(
-            service: service,
+            service: service
         )
         self.watchListSorter = watchListSorter
         self.watchlistStore = watchlistStore
@@ -76,7 +76,7 @@ final class WatchListViewModel {
             stocks,
             quotes: quotes,
             sortOption: sortOption,
-            sortDirection: sortDirection,
+            sortDirection: sortDirection
         )
     }
 
@@ -135,7 +135,7 @@ final class WatchListViewModel {
     func startPolling() async {
         await quoteRefreshController.startPolling(
             symbols: { self.symbols },
-            update: { self.quotes = $0 },
+            update: { self.quotes = $0 }
         )
     }
 

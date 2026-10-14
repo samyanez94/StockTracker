@@ -12,7 +12,6 @@ import Foundation
 /// Supports one-off refreshes and polling that runs until its calling task is cancelled.
 @MainActor
 final class QuoteRefreshController {
-
     private var isRefreshing = false
 
     private let service: any StockServicing
@@ -43,7 +42,7 @@ final class QuoteRefreshController {
         do {
             let fetchedQuotes = try await service.fetchQuotes(symbols: symbols)
             return Dictionary(
-                uniqueKeysWithValues: fetchedQuotes.map { ($0.symbol, $0) },
+                uniqueKeysWithValues: fetchedQuotes.map { ($0.symbol, $0) }
             )
         } catch {
             return nil
@@ -59,7 +58,7 @@ final class QuoteRefreshController {
     ///     watchlist. Failed or overlapping refreshes do not invoke this closure.
     func startPolling(
         symbols: @escaping () -> [String],
-        update: @escaping ([String: Quote]) -> Void,
+        update: @escaping ([String: Quote]) -> Void
     ) async {
         while !Task.isCancelled {
             if let quotes = await refresh(symbols: symbols()) {

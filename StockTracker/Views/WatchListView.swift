@@ -23,7 +23,7 @@ struct WatchListView: View {
                     ForEach(viewModel.searchResults) { stock in
                         StockSearchResultRowView(
                             stock: stock,
-                            isInWatchlist: viewModel.isInWatchlist(stock),
+                            isInWatchlist: viewModel.isInWatchlist(stock)
                         ) {
                             Task {
                                 await viewModel.toggleWatchlistMembership(for: stock)
@@ -67,7 +67,7 @@ struct WatchListView: View {
                 text: $viewModel.searchText,
                 isPresented: $viewModel.isSearchPresented,
                 placement: .automatic,
-                prompt: "Search stocks",
+                prompt: "Search stocks"
             )
             .onChange(of: viewModel.searchText) {
                 Task {
@@ -94,7 +94,7 @@ struct WatchListView: View {
         viewModel: WatchListViewModel(
             stocks: AppFactory.stocks,
             service: StockService(usesMockData: true),
-            watchlistStore: WatchlistStore(),
-        ),
+            watchlistStore: WatchlistStore()
+        )
     )
 }

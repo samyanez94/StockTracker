@@ -21,7 +21,7 @@ struct WatchListSorterTests {
             [tesla, microsoft, apple],
             quotes: [:],
             sortOption: .symbol,
-            sortDirection: .ascending,
+            sortDirection: .ascending
         )
 
         #expect(sortedStocks == [apple, microsoft, tesla])
@@ -37,7 +37,7 @@ struct WatchListSorterTests {
             [tesla, microsoft, apple],
             quotes: [:],
             sortOption: .symbol,
-            sortDirection: .descending,
+            sortDirection: .descending
         )
 
         #expect(sortedStocks == [tesla, microsoft, apple])
@@ -53,7 +53,7 @@ struct WatchListSorterTests {
             [tesla, microsoft, apple],
             quotes: [:],
             sortOption: .name,
-            sortDirection: .ascending,
+            sortDirection: .ascending
         )
 
         #expect(sortedStocks == [apple, microsoft, tesla])
@@ -69,7 +69,7 @@ struct WatchListSorterTests {
             [tesla, microsoft, apple],
             quotes: [:],
             sortOption: .name,
-            sortDirection: .descending,
+            sortDirection: .descending
         )
 
         #expect(sortedStocks == [tesla, microsoft, apple])
@@ -89,7 +89,7 @@ struct WatchListSorterTests {
             [apple, tesla, microsoft],
             quotes: quotes,
             sortOption: .percentageChange,
-            sortDirection: .descending,
+            sortDirection: .descending
         )
 
         #expect(sortedStocks == [microsoft, apple, tesla])
@@ -109,7 +109,7 @@ struct WatchListSorterTests {
             [apple, tesla, microsoft],
             quotes: quotes,
             sortOption: .percentageChange,
-            sortDirection: .ascending,
+            sortDirection: .ascending
         )
 
         #expect(sortedStocks == [apple, microsoft, tesla])

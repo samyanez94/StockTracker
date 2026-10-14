@@ -22,7 +22,8 @@ struct TwelveDataQuoteResponse: Decodable {
         guard let price = Double(close),
               price.isFinite,
               let change = Double(percentChange),
-              change.isFinite else {
+              change.isFinite
+        else {
             throw StockServiceError.invalidResponse
         }
         return Quote(symbol: symbol, price: price, percentChange: change)

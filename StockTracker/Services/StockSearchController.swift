@@ -24,7 +24,7 @@ final class StockSearchController {
     ///   - debounceDuration: How long to wait before fetching, defaulting to 300 milliseconds.
     init(
         service: any StockServicing,
-        debounceDuration: Duration = .milliseconds(300),
+        debounceDuration: Duration = .milliseconds(300)
     ) {
         self.service = service
         self.debounceDuration = debounceDuration

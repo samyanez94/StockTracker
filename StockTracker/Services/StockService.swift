@@ -38,7 +38,7 @@ struct StockService: StockServicing {
     ///   - apiKey: The API key used for live requests; mock mode does not require a key.
     init(
         usesMockData: Bool = false,
-        apiKey: String = Secrets.twelveDataAPIKey,
+        apiKey: String = Secrets.twelveDataAPIKey
     ) {
         self.usesMockData = usesMockData
         self.apiKey = apiKey

@@ -8,16 +8,15 @@
 import Foundation
 
 struct TwelveDataQuoteRequest: StockRequest {
-
     let symbols: [String]
 
     func url(apiKey: String) throws -> URL {
         try TwelveDataAPI.url(
             path: "/quote",
             queryItems: [
-                URLQueryItem(name: "symbol", value: symbols.joined(separator: ","))
+                URLQueryItem(name: "symbol", value: symbols.joined(separator: ",")),
             ],
-            apiKey: apiKey,
+            apiKey: apiKey
         )
     }
 
@@ -30,10 +29,10 @@ struct TwelveDataQuoteRequest: StockRequest {
             guard response.symbol == symbols[0] else {
                 throw StockServiceError.invalidResponse
             }
-            return [try response.toQuote()]
+            return try [response.toQuote()]
         }
         let responses = try TwelveDataAPI.decode(
-            [String: TwelveDataResult<TwelveDataQuoteResponse>].self, from: data,
+            [String: TwelveDataResult<TwelveDataQuoteResponse>].self, from: data
         )
         // Fail the refresh on partial errors so the controller preserves existing quotes.
         return try symbols.map { symbol in

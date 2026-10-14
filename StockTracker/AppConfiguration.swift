@@ -13,6 +13,6 @@ struct AppConfiguration {
 
     static let current = AppConfiguration(
         usesMockData: true,
-        twelveDataAPIKey: Secrets.twelveDataAPIKey,
+        twelveDataAPIKey: Secrets.twelveDataAPIKey
     )
 }

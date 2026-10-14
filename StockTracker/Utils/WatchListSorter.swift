@@ -12,7 +12,7 @@ nonisolated struct WatchListSorter {
         _ stocks: [Stock],
         quotes: [String: Quote],
         sortOption: WatchListSortOption,
-        sortDirection: WatchListSortDirection,
+        sortDirection: WatchListSortDirection
     ) -> [Stock] {
         switch sortOption {
         case .percentageChange:
@@ -50,7 +50,7 @@ nonisolated struct WatchListSorter {
     private func isSymbolAscending(
         _ lhs: Stock,
         _ rhs: Stock,
-        direction: WatchListSortDirection,
+        direction: WatchListSortDirection
     ) -> Bool {
         let comparison = lhs.symbol.localizedStandardCompare(rhs.symbol)
         return direction == .ascending
@@ -61,7 +61,7 @@ nonisolated struct WatchListSorter {
     private func isCompanyNameAscending(
         _ lhs: Stock,
         _ rhs: Stock,
-        direction: WatchListSortDirection,
+        direction: WatchListSortDirection
     ) -> Bool {
         let comparison = lhs.companyName.localizedStandardCompare(rhs.companyName)
         return direction == .ascending

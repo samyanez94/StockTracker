@@ -18,7 +18,7 @@ struct WatchListViewModelTests {
         let viewModel = WatchListViewModel(
             stocks: [stock],
             service: MockStockService(quotes: [quote]),
-            watchlistStore: MockWatchlistStore(),
+            watchlistStore: MockWatchlistStore()
         )
 
         await viewModel.refresh()
@@ -35,7 +35,7 @@ struct WatchListViewModelTests {
         let viewModel = WatchListViewModel(
             stocks: [stock],
             service: MockStockService(error: TestError.fetchFailed),
-            watchlistStore: MockWatchlistStore(),
+            watchlistStore: MockWatchlistStore()
         )
         viewModel.quotes = [quote.symbol: quote]
 
@@ -53,7 +53,7 @@ struct WatchListViewModelTests {
         let viewModel = WatchListViewModel(
             stocks: [stock],
             service: service,
-            watchlistStore: MockWatchlistStore(),
+            watchlistStore: MockWatchlistStore()
         )
 
         let firstRefresh = Task {
@@ -74,7 +74,7 @@ struct WatchListViewModelTests {
         let viewModel = WatchListViewModel(
             stocks: [],
             service: MockStockService(),
-            watchlistStore: watchlistStore,
+            watchlistStore: watchlistStore
         )
 
         #expect(viewModel.sortOption == .name)
@@ -86,7 +86,7 @@ struct WatchListViewModelTests {
         let viewModel = WatchListViewModel(
             stocks: [],
             service: MockStockService(),
-            watchlistStore: watchlistStore,
+            watchlistStore: watchlistStore
         )
 
         #expect(viewModel.sortDirection == .descending)
@@ -98,7 +98,7 @@ struct WatchListViewModelTests {
         let viewModel = WatchListViewModel(
             stocks: [],
             service: MockStockService(),
-            watchlistStore: watchlistStore,
+            watchlistStore: watchlistStore
         )
 
         viewModel.sortOption = .percentageChange
@@ -112,7 +112,7 @@ struct WatchListViewModelTests {
         let viewModel = WatchListViewModel(
             stocks: [],
             service: MockStockService(),
-            watchlistStore: watchlistStore,
+            watchlistStore: watchlistStore
         )
 
         viewModel.sortDirection = .descending
@@ -129,7 +129,7 @@ struct WatchListViewModelTests {
             stocks: [apple],
             service: service,
             watchlistStore: MockWatchlistStore(),
-            searchDebounceDuration: .zero,
+            searchDebounceDuration: .zero
         )
 
         viewModel.searchText = "micro"
@@ -148,7 +148,7 @@ struct WatchListViewModelTests {
             stocks: [apple],
             service: service,
             watchlistStore: MockWatchlistStore(),
-            searchDebounceDuration: .milliseconds(100),
+            searchDebounceDuration: .milliseconds(100)
         )
 
         viewModel.searchText = "app"
@@ -174,7 +174,7 @@ struct WatchListViewModelTests {
             stocks: [apple],
             service: service,
             watchlistStore: MockWatchlistStore(),
-            searchDebounceDuration: .milliseconds(100),
+            searchDebounceDuration: .milliseconds(100)
         )
         viewModel.searchResults = [apple]
 
@@ -200,7 +200,7 @@ struct WatchListViewModelTests {
         let viewModel = WatchListViewModel(
             stocks: [apple],
             service: MockStockService(),
-            watchlistStore: MockWatchlistStore(),
+            watchlistStore: MockWatchlistStore()
         )
         viewModel.searchText = "micro"
         viewModel.searchResults = [microsoft]
@@ -222,7 +222,7 @@ struct WatchListViewModelTests {
         let viewModel = WatchListViewModel(
             stocks: [apple],
             service: service,
-            watchlistStore: watchlistStore,
+            watchlistStore: watchlistStore
         )
 
         await viewModel.addToWatchlist(microsoft)
@@ -239,7 +239,7 @@ struct WatchListViewModelTests {
         let viewModel = WatchListViewModel(
             stocks: [apple],
             service: MockStockService(),
-            watchlistStore: MockWatchlistStore(),
+            watchlistStore: MockWatchlistStore()
         )
 
         await viewModel.addToWatchlist(apple)
@@ -253,7 +253,7 @@ struct WatchListViewModelTests {
         let viewModel = WatchListViewModel(
             stocks: [apple],
             service: MockStockService(),
-            watchlistStore: MockWatchlistStore(),
+            watchlistStore: MockWatchlistStore()
         )
         viewModel.quotes = [
             "AAPL": Quote(symbol: "AAPL", price: 204.18, percentChange: 0.62),
@@ -273,7 +273,7 @@ struct WatchListViewModelTests {
         let viewModel = WatchListViewModel(
             stocks: [apple],
             service: MockStockService(),
-            watchlistStore: watchlistStore,
+            watchlistStore: watchlistStore
         )
         viewModel.quotes = [
             "AAPL": Quote(symbol: "AAPL", price: 204.18, percentChange: 0.62),
@@ -295,7 +295,7 @@ private final class MockWatchlistStore: WatchlistStoring {
     init(
         savedStocks: [Stock] = [],
         savedSortOption: WatchListSortOption? = nil,
-        savedSortDirection: WatchListSortDirection? = nil,
+        savedSortDirection: WatchListSortDirection? = nil
     ) {
         self.savedStocks = savedStocks
         self.savedSortOption = savedSortOption
@@ -338,7 +338,7 @@ private actor MockStockService: StockServicing {
         quotes: [Quote] = [],
         searchResults: [Stock] = [],
         error: Error? = nil,
-        delay: Duration = .zero,
+        delay: Duration = .zero
     ) {
         self.quotes = quotes
         self.searchResults = searchResults
@@ -346,7 +346,7 @@ private actor MockStockService: StockServicing {
         self.delay = delay
     }
 
-    func fetchQuotes(symbols: [String]) async throws -> [Quote] {
+    func fetchQuotes(symbols _: [String]) async throws -> [Quote] {
         try await prepareResponse()
         return quotes
     }

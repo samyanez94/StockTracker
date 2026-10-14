@@ -9,7 +9,6 @@ import Foundation
 
 /// Shared URL construction and error-envelope decoding for Twelve Data requests.
 nonisolated enum TwelveDataAPI {
-
     /// Builds an HTTPS URL on `api.twelvedata.com` with API-key authentication.
     /// - Parameters:
     ///   - path: The endpoint path, including its leading slash.
@@ -45,7 +44,7 @@ nonisolated enum TwelveDataAPI {
     /// - Throws: `StockServiceError.apiError` for an API error envelope, or a decoding
     ///   error if the payload does not match the expected format.
     static func decode<Value: Decodable>(
-        _ type: Value.Type,
+        _: Value.Type,
         from data: Data
     ) throws -> Value {
         try JSONDecoder().decode(TwelveDataResult<Value>.self, from: data).value()

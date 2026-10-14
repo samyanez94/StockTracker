@@ -14,7 +14,7 @@ nonisolated struct TwelveDataSearchRequest: StockRequest {
         try TwelveDataAPI.url(
             path: "/symbol_search",
             queryItems: [URLQueryItem(name: "symbol", value: query)],
-            apiKey: apiKey,
+            apiKey: apiKey
         )
     }
 
@@ -37,7 +37,7 @@ nonisolated struct TwelveDataSearchRequest: StockRequest {
                 "exchange_timezone": "America/New_York",
                 "instrument_type": "Common Stock",
                 "country": "United States",
-                "currency": "USD"
+                "currency": "USD",
             ]
         }
         return try JSONSerialization.data(

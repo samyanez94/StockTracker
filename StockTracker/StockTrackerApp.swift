@@ -17,7 +17,6 @@ struct StockTrackerApp: App {
 }
 
 enum AppFactory {
-
     @MainActor
     static func makeWatchListView() -> WatchListView {
         let configuration = AppConfiguration.current
@@ -28,10 +27,10 @@ enum AppFactory {
                 stocks: savedStocks ?? stocks,
                 service: StockService(
                     usesMockData: configuration.usesMockData,
-                    apiKey: configuration.twelveDataAPIKey,
+                    apiKey: configuration.twelveDataAPIKey
                 ),
-                watchlistStore: watchlistStore,
-            ),
+                watchlistStore: watchlistStore
+            )
         )
     }
 

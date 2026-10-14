@@ -30,7 +30,7 @@ struct WatchlistStore: WatchlistStoring {
         defaults: UserDefaults = .standard,
         key: String = "watchlist",
         sortOptionKey: String = "watchlistSortOption",
-        sortDirectionKey: String = "watchlistSortDirection",
+        sortDirectionKey: String = "watchlistSortDirection"
     ) {
         self.defaults = defaults
         self.key = key
