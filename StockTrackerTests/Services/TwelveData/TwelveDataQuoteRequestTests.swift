@@ -123,8 +123,10 @@ struct TwelveDataQuoteRequestTests {
         #expect(quote.high == nil)
         #expect(quote.formattedChange == "—")
         #expect(quote.formattedOpen == "—")
-        #expect(quote.formattedDayRange == "—")
-        #expect(quote.formattedFiftyTwoWeekRange == "—")
+        #expect(quote.formattedHigh == "—")
+        #expect(quote.formattedLow == "—")
+        #expect(quote.formattedFiftyTwoWeekHigh == "—")
+        #expect(quote.formattedFiftyTwoWeekLow == "—")
     }
 
     @Test

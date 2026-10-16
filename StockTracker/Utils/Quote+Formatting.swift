@@ -44,12 +44,20 @@ extension Quote {
         formatVolume(averageVolume)
     }
 
-    var formattedDayRange: String {
-        formatRange(low: low, high: high)
+    var formattedHigh: String {
+        formatPrice(high)
     }
 
-    var formattedFiftyTwoWeekRange: String {
-        formatRange(low: fiftyTwoWeekLow, high: fiftyTwoWeekHigh)
+    var formattedLow: String {
+        formatPrice(low)
+    }
+
+    var formattedFiftyTwoWeekHigh: String {
+        formatPrice(fiftyTwoWeekHigh)
+    }
+
+    var formattedFiftyTwoWeekLow: String {
+        formatPrice(fiftyTwoWeekLow)
     }
 
     private func formatVolume(_ value: Int64?) -> String {
@@ -58,14 +66,5 @@ extension Quote {
 
     private func formatPrice(_ value: Double?) -> String {
         value?.formatted(.currency(code: currency).precision(.fractionLength(2))) ?? "—"
-    }
-
-    private func formatRange(low: Double?, high: Double?) -> String {
-        guard let low,
-              let high,
-              low <= high else {
-            return "—"
-        }
-        return "\(formatPrice(low)) – \(formatPrice(high))"
     }
 }

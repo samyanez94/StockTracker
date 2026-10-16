@@ -63,8 +63,10 @@ struct StockDetailView: View {
                     statistic("Previous Close", value: quote?.formattedPreviousClose)
                     statistic("Volume", value: quote?.formattedVolume)
                     statistic("Average Volume", value: quote?.formattedAverageVolume)
-                    statistic("Day Range", value: quote?.formattedDayRange)
-                    statistic("52-Week Range", value: quote?.formattedFiftyTwoWeekRange)
+                    statistic("Today's High", value: quote?.formattedHigh)
+                    statistic("Today's Low", value: quote?.formattedLow)
+                    statistic("52-Week High", value: quote?.formattedFiftyTwoWeekHigh)
+                    statistic("52-Week Low", value: quote?.formattedFiftyTwoWeekLow)
                 }
                 .padding(24)
             }
