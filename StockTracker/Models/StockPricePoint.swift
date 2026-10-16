@@ -22,4 +22,18 @@ nonisolated struct StockPricePoint: Identifiable, Equatable, Sendable {
     var id: Date {
         date
     }
+
+    /// Percentage change from the previous close to this bar's closing price.
+    /// Missing or invalid baselines cannot produce a meaningful percentage.
+    func percentChange(from previousClose: Double?) -> Double? {
+        guard let previousClose,
+              previousClose.isFinite,
+              previousClose > 0,
+              price.isFinite
+        else {
+            return nil
+        }
+        let change = (price - previousClose) / previousClose * 100
+        return change.isFinite ? change : nil
+    }
 }

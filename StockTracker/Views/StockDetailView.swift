@@ -42,17 +42,6 @@ struct StockDetailView: View {
                             .font(.title3)
                             .foregroundStyle(.secondary)
                     }
-                    ViewThatFits(in: .horizontal) {
-                        HStack(alignment: .firstTextBaseline, spacing: 24) {
-                            price
-                            Spacer(minLength: 0)
-                            dailyChange
-                        }
-                        VStack(alignment: .leading, spacing: 12) {
-                            price
-                            dailyChange
-                        }
-                    }
                 }
                 .padding(24)
 
@@ -99,7 +88,7 @@ struct StockDetailView: View {
                 StockPriceChart(
                     points: points,
                     currency: quote?.currency ?? "USD",
-                    percentChange: quote?.percentChange ?? 0
+                    previousClose: quote?.previousClose
                 )
             case .loaded:
                 Text("No price history available")
@@ -111,34 +100,6 @@ struct StockDetailView: View {
         }
         .frame(maxWidth: .infinity)
         .frame(height: dynamicTypeSize.isAccessibilitySize ? 280 : 220)
-    }
-
-    private var price: some View {
-        Text(quote?.formattedPriceWithCurrency ?? "Price unavailable")
-            .font(.title2.bold())
-            .monospacedDigit()
-            .fixedSize(horizontal: false, vertical: true)
-            .accessibilityLabel("Latest price")
-            .accessibilityValue(quote?.formattedPriceWithCurrency ?? "Unavailable")
-    }
-
-    private var dailyChange: some View {
-        HStack(alignment: .center, spacing: 6) {
-            Text(quote?.formattedPercentChange ?? "—")
-            if let change = quote?.percentChange,
-               change != 0
-            {
-                Image(systemName: change > 0 ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
-                    .font(.caption)
-                    .accessibilityHidden(true)
-            }
-        }
-        .font(.headline)
-        .foregroundStyle((quote?.percentChange ?? 0) >= 0 ? Color.green : Color.red)
-        .monospacedDigit()
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Daily change")
-        .accessibilityValue(quote?.formattedPercentChange ?? "Unavailable")
     }
 
     private func statistic(_ title: String, value: String?) -> some View {
@@ -161,10 +122,18 @@ struct StockDetailView: View {
         StockDetailView(
             stock: Stock(symbol: "AAPL", companyName: "Apple Inc."),
             quote: Quote(
-                symbol: "AAPL", price: 204.18, percentChange: 0.62,
-                change: 1.26, open: 203.33, previousClose: 202.92,
-                volume: 45_000_000, averageVolume: 52_000_000,
-                low: 201.30, high: 206.22, fiftyTwoWeekLow: 147.01, fiftyTwoWeekHigh: 253.18
+                symbol: "AAPL",
+                price: 204.18,
+                percentChange: 0.62,
+                change: 1.26,
+                open: 203.33,
+                previousClose: 202.92,
+                volume: 45_000_000,
+                averageVolume: 52_000_000,
+                low: 201.30,
+                high: 206.22,
+                fiftyTwoWeekLow: 147.01,
+                fiftyTwoWeekHigh: 253.18
             ),
             service: StockService(usesMockData: true)
         )
