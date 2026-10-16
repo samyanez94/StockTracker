@@ -119,4 +119,58 @@ struct TwelveDataRequestTests {
             try await StockService(usesMockData: true, apiKey: "").fetchQuotes(symbols: ["UNKNOWN"])
         }
     }
+
+    @Test
+    func `quote details map into domain model`() throws {
+        let data = Data(#"{"symbol":"AAPL","close":"204.18","percent_change":"0.62","currency":"USD","change":"1.26","open":"203.33","previous_close":"202.92","volume":"45000000","average_volume":"52000000","low":"201.30","high":"206.22","fifty_two_week":{"low":"147.01","high":"253.18"}}"#.utf8)
+        let quote = try #require(TwelveDataQuoteRequest(symbols: ["AAPL"]).decode(data).first)
+        #expect(quote.currency == "USD")
+        #expect(quote.change == 1.26)
+        #expect(quote.open == 203.33)
+        #expect(quote.previousClose == 202.92)
+        #expect(quote.volume == 45_000_000)
+        #expect(quote.averageVolume == 52_000_000)
+        #expect(quote.low == 201.30)
+        #expect(quote.high == 206.22)
+        #expect(quote.fiftyTwoWeekLow == 147.01)
+        #expect(quote.fiftyTwoWeekHigh == 253.18)
+    }
+
+    @Test
+    func `unavailable statistics preserve core quote`() throws {
+        let data = Data(#"{"symbol":"AAPL","close":"204.18","percent_change":"0.62","open":null,"previous_close":"N/A","volume":"-1","average_volume":"unknown","low":"NaN","high":"Infinity","fifty_two_week":{"low":null}}"#.utf8)
+        let quote = try #require(TwelveDataQuoteRequest(symbols: ["AAPL"]).decode(data).first)
+        #expect(quote.price == 204.18)
+        #expect(quote.open == nil)
+        #expect(quote.previousClose == nil)
+        #expect(quote.volume == nil)
+        #expect(quote.averageVolume == nil)
+        #expect(quote.low == nil)
+        #expect(quote.high == nil)
+        #expect(quote.formattedChange == "—")
+        #expect(quote.formattedOpen == "—")
+        #expect(quote.formattedDayRange == "—")
+        #expect(quote.formattedFiftyTwoWeekRange == "—")
+    }
+
+    @Test
+    func `mock quotes include consistent statistics`() async throws {
+        let service = StockService(usesMockData: true, apiKey: "")
+        let quotes = try await service.fetchQuotes(symbols: TwelveDataMockData.stocks.map(\.symbol))
+        for quote in quotes {
+            let previous = try #require(quote.previousClose)
+            let change = try #require(quote.change)
+            let open = try #require(quote.open)
+            let low = try #require(quote.low)
+            let high = try #require(quote.high)
+            let yearLow = try #require(quote.fiftyTwoWeekLow)
+            let yearHigh = try #require(quote.fiftyTwoWeekHigh)
+            #expect(abs(quote.price - previous - change) < 0.000001)
+            #expect(abs(change / previous * 100 - quote.percentChange) < 0.01)
+            #expect(low <= min(open, quote.price))
+            #expect(high >= max(open, quote.price))
+            #expect(yearLow <= low && yearHigh >= high)
+            #expect(quote.volume != nil && quote.averageVolume != nil)
+        }
+    }
 }

@@ -32,18 +32,29 @@ struct WatchListView: View {
                     }
                 } else {
                     ForEach(viewModel.sortedStocks) { stock in
-                        StockRowView(stock: stock, quote: viewModel.quote(for: stock))
-                            .swipeActions(edge: .trailing) {
-                                Button(role: .destructive) {
-                                    viewModel.removeFromWatchlist(stock)
-                                } label: {
-                                    Label("Remove", systemImage: "trash")
-                                }
+                        NavigationLink(value: stock) {
+                            StockRowView(
+                                stock: stock,
+                                quote: viewModel.quote(for: stock)
+                            )
+                        }
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                viewModel.removeFromWatchlist(stock)
+                            } label: {
+                                Label("Remove", systemImage: "trash")
                             }
+                        }
                     }
                 }
             }
             .navigationTitle("Stocks")
+            .navigationDestination(for: Stock.self) { stock in
+                StockDetailView(
+                    stock: stock,
+                    quote: viewModel.quote(for: stock)
+                )
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
