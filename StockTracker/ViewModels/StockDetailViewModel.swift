@@ -18,14 +18,16 @@ final class StockDetailViewModel {
     }
 
     private(set) var state: State = .loading
+
     private let service: any StockServicing
+
     private var requestID = UUID()
 
     init(service: any StockServicing) {
         self.service = service
     }
 
-    /// Loads history, ignoring cancelled or superseded results.
+    /// Loads the latest available exchange-local trading day, ignoring cancelled or superseded results.
     func load(symbol: String) async {
         let id = UUID()
         requestID = id
@@ -33,11 +35,33 @@ final class StockDetailViewModel {
         do {
             let points = try await service.fetchTimeSeries(symbol: symbol)
             try Task.checkCancellation()
-            guard requestID == id else { return }
-            state = .loaded(points)
+            guard requestID == id else {
+                return
+            }
+            state = .loaded(latestSession(in: points))
         } catch {
-            guard requestID == id, !Task.isCancelled, !(error is CancellationError) else { return }
+            guard requestID == id,
+                  !Task.isCancelled,
+                  !(error is CancellationError)
+            else {
+                return
+            }
             state = .failed
         }
+    }
+
+    /// US regular-session bars belong to the session identified by their exchange-local date.
+    ///
+    /// Using the newest bar rather than today also handles weekends, holidays, and pre-open hours.
+    private func latestSession(in points: [StockPricePoint]) -> [StockPricePoint] {
+        guard let latest = points.max(by: { $0.date < $1.date }) else {
+            return []
+        }
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = latest.timeZone
+        return points.filter {
+            calendar.isDate($0.date, inSameDayAs: latest.date)
+        }
+        .sorted { $0.date < $1.date }
     }
 }
