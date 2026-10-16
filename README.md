@@ -6,11 +6,11 @@ The app displays stock quote data from the [Twelve Data](https://twelvedata.com/
 
 ## Service Interface
 
-App code depends on `StockServicing`, which exposes `fetchQuotes(symbols:)` and `searchStocks(query:)`. `StockService` creates the Twelve Data requests internally and uses a private generic `fetch` helper for networking, mock data, and decoding. Controllers and service test doubles do not need provider-specific request types. An empty quote list returns immediately without a network request.
+App code depends on `StockServicing`, which exposes `fetchQuotes(symbols:)`, `searchStocks(query:)`, and `fetchTimeSeries(symbol:)`. `StockService` creates the Twelve Data requests internally and uses a private generic `fetch` helper for networking, mock data, and decoding. Controllers and service test doubles do not need provider-specific request types. An empty quote list returns immediately without a network request.
 
 ## Data Modes
 
-Mock mode is enabled by default in `AppConfiguration.current` and needs no API key. Quotes and search use deterministic synthetic JSON matching Twelve Data's `/quote` and `/symbol_search` response shapes. Both modes run through the same decoders; missing mock data produces an error and never falls back to networking.
+Mock mode is enabled by default in `AppConfiguration.current` and needs no API key. Quotes, search, and price history use deterministic synthetic JSON matching Twelve Data's `/quote`, `/symbol_search`, and `/time_series` response shapes. Both modes run through the same decoders; missing mock data produces an error and never falls back to networking.
 
 The mock catalog contains AAPL, AMZN, GOOGL, META, MSFT, NVDA, and TSLA. Search is limited to US common stocks quoted in USD and deduplicated by symbol. A failed or partial quote batch preserves the existing quotes.
 
@@ -26,7 +26,9 @@ TWELVE_DATA_API_KEY = your_api_key_here
 
 `Config/Debug.xcconfig` and `Config/Release.xcconfig` include this local secrets file when it exists. To enable live calls, set `usesMockData` to `false` in `AppConfiguration.current`. Use a Twelve Data key; an existing StockData key is not compatible. Live calls consume account credits, and the current 60-second polling and search debounce do not implement a provider-wide rate limiter. Verify your plan's access before enabling live mode.
 
-This integration covers quotes and search only; historical time series and detail charts are not implemented.
+Price history fetches the latest 78 regular-session five-minute bars for one symbol. Both modes return `StockPricePoint` values sorted oldest first, parsing timestamps using the response's exchange timezone (including daylight saving time). Invalid prices, dates, duplicate timestamps, or mismatched metadata fail the request; empty results remain empty. Live results can span trading sessions, so this is not yet a calendar-day filter. Mock history uses a fixed synthetic session on October 15, 2026, ending at each stock's mock quote price. The chart UI and period selection are not implemented yet.
+
+As verified October 16, 2026, [Basic pricing](https://twelvedata.com/pricing) lists 8 API credits per minute and 800 per day. `/time_series` costs 1 credit per symbol. Seven watchlist quotes per minute leave only one credit for history or search; continuous polling can exhaust the daily quota. History is exposed as an on-demand service method and is not added to polling. Basic lists internal non-display usage; confirm display licensing with Twelve Data before distributing an app using live data. The [historical prices guide](https://support.twelvedata.com/en/articles/5656039-how-to-get-historical-prices) confirms five-minute bars and a maximum `outputsize` of 5,000 records per request. Historical availability depends on the instrument and account entitlements; no unlimited-history guarantee is assumed.
 
 API reference: [Twelve Data documentation](https://twelvedata.com/docs).
 

@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Provides stock quotes and search results independently of the data provider.
+/// Provides stock quotes, price history, and search results independently of the data provider.
 ///
 /// Implementations can supply live data or test responses without exposing request types.
 nonisolated protocol StockServicing {
@@ -17,6 +17,10 @@ nonisolated protocol StockServicing {
     /// - Throws: An error if the quotes cannot be loaded or decoded.
     func fetchQuotes(symbols: [String]) async throws -> [Quote]
 
+    /// Loads the latest 78 five-minute closing prices, ordered oldest first.
+    /// - Throws: A request, networking, API, or decoding error.
+    func fetchTimeSeries(symbol: String) async throws -> [StockPricePoint]
+
     /// Finds stocks matching a symbol or company name.
     /// - Parameter query: The search text.
     /// - Returns: Stocks matching the query.
@@ -24,7 +28,7 @@ nonisolated protocol StockServicing {
     func searchStocks(query: String) async throws -> [Stock]
 }
 
-/// Provides quotes and search using Twelve Data requests and local mock JSON.
+/// Provides quotes, price history, and search using Twelve Data requests and local mock JSON.
 ///
 /// Both modes use the request's decoder. Mock mode never falls back to networking.
 struct StockService: StockServicing {
@@ -55,6 +59,14 @@ struct StockService: StockServicing {
             return []
         }
         return try await fetch(TwelveDataQuoteRequest(symbols: symbols))
+    }
+
+    /// Loads recent price history through the configured live or mock data source.
+    /// - Returns: Chronological points, or an empty array when the provider has no bars.
+    /// - Throws: A mock-data, request, networking, API, or decoding error.
+    @MainActor
+    func fetchTimeSeries(symbol: String) async throws -> [StockPricePoint] {
+        try await fetch(TwelveDataTimeSeriesRequest(symbol: symbol))
     }
 
     /// Searches Twelve Data for US common stocks quoted in USD.
