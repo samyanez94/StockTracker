@@ -32,46 +32,9 @@ struct StockDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                VStack(alignment: .leading, spacing: 8) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(stock.companyName)
-                            .font(.title.bold())
-                            .accessibilityAddTraits(.isHeader)
-                        Text(stock.symbol)
-                            .font(.title3)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .padding(24)
-
-                chart
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 24)
-
-                Divider()
-
-                LazyVGrid(
-                    columns: Array(
-                        repeating: GridItem(.flexible(), alignment: .leading),
-                        count: dynamicTypeSize.isAccessibilitySize ? 1 : 2
-                    ),
-                    alignment: .leading,
-                    spacing: 16
-                ) {
-                    statistic("Open", value: quote?.formattedOpen)
-                    statistic("Previous Close", value: quote?.formattedPreviousClose)
-                    statistic("Volume", value: quote?.formattedVolume)
-                    statistic("Average Volume", value: quote?.formattedAverageVolume)
-                    statistic("Today's High", value: quote?.formattedHigh)
-                    statistic("Today's Low", value: quote?.formattedLow)
-                    statistic("52-Week High", value: quote?.formattedFiftyTwoWeekHigh)
-                    statistic("52-Week Low", value: quote?.formattedFiftyTwoWeekLow)
-                }
-                .padding(24)
-            }
-            .background(.background, in: .rect(cornerRadius: 24))
-            .padding()
+            cardView
+                .background(.background, in: .rect(cornerRadius: 24))
+                .padding()
         }
         .background(Color(uiColor: .systemGroupedBackground))
         .task(id: stock.symbol) {
@@ -81,7 +44,33 @@ struct StockDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private var chart: some View {
+    private var cardView: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(stock.companyName)
+                        .font(.title.bold())
+                        .accessibilityAddTraits(.isHeader)
+                    Text(stock.symbol)
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                }
+                chartView
+            }
+            .padding(24)
+
+            Divider()
+
+            StockStatsView(quote: quote)
+                .padding(24)
+        }
+    }
+
+    private var chartHeight: CGFloat {
+        dynamicTypeSize.isAccessibilitySize ? 280 : 220
+    }
+
+    private var chartView: some View {
         Group {
             switch viewModel.state {
             case .loading:
@@ -101,21 +90,7 @@ struct StockDetailView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(height: dynamicTypeSize.isAccessibilitySize ? 280 : 220)
-    }
-
-    private func statistic(_ title: String, value: String?) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(title)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Text(value ?? "—")
-                .font(.headline)
-                .monospacedDigit()
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityElement(children: .combine)
+        .frame(height: chartHeight)
     }
 }
 
