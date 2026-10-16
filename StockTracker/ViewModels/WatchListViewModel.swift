@@ -36,6 +36,8 @@ final class WatchListViewModel {
         stocks.map(\.symbol)
     }
 
+    let service: any StockServicing
+
     private let searchController: StockSearchController
 
     private let quoteRefreshController: QuoteRefreshController
@@ -53,6 +55,7 @@ final class WatchListViewModel {
         quoteRefreshController: QuoteRefreshController? = nil,
         watchListSorter: WatchListSorter = WatchListSorter()
     ) {
+        self.service = service
         self.stocks = stocks
         self.searchController = searchController ?? StockSearchController(
             service: service,

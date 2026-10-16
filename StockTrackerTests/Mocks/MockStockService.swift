@@ -9,6 +9,7 @@ import Foundation
 @testable import StockTracker
 
 actor MockStockService: StockServicing {
+    let points: [StockPricePoint]
     let quotes: [Quote]
     let searchResults: [Stock]
     let error: Error?
@@ -16,11 +17,13 @@ actor MockStockService: StockServicing {
     private(set) var fetchCount = 0
 
     init(
+        points: [StockPricePoint] = [],
         quotes: [Quote] = [],
         searchResults: [Stock] = [],
         error: Error? = nil,
         delay: Duration = .zero
     ) {
+        self.points = points
         self.quotes = quotes
         self.searchResults = searchResults
         self.error = error
@@ -34,7 +37,7 @@ actor MockStockService: StockServicing {
 
     func fetchTimeSeries(symbol _: String) async throws -> [StockPricePoint] {
         try await prepareResponse()
-        return []
+        return points
     }
 
     func searchStocks(query: String) async throws -> [Stock] {

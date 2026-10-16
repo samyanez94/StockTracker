@@ -50,7 +50,7 @@ struct TwelveDataTimeSeriesResponse: Decodable {
             else {
                 throw StockServiceError.invalidResponse
             }
-            return StockPricePoint(date: date, price: price)
+            return StockPricePoint(date: date, price: price, timeZone: timeZone)
         }
         .sorted { $0.date < $1.date }
     }

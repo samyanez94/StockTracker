@@ -11,6 +11,13 @@ import Foundation
 nonisolated struct StockPricePoint: Identifiable, Equatable, Sendable {
     let date: Date
     let price: Double
+    let timeZone: TimeZone
+
+    init(date: Date, price: Double, timeZone: TimeZone = .gmt) {
+        self.date = date
+        self.price = price
+        self.timeZone = timeZone
+    }
 
     var id: Date {
         date

@@ -12,9 +12,23 @@ import UIKit
 struct StockDetailView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
+    @State private var viewModel: StockDetailViewModel
+
     let stock: Stock
 
     let quote: Quote?
+
+    init(
+        stock: Stock,
+        quote: Quote?,
+        service: any StockServicing
+    ) {
+        self.stock = stock
+        self.quote = quote
+        _viewModel = State(
+            initialValue: StockDetailViewModel(service: service)
+        )
+    }
 
     var body: some View {
         ScrollView {
@@ -42,6 +56,10 @@ struct StockDetailView: View {
                 }
                 .padding(24)
 
+                chart
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 24)
+
                 Divider()
 
                 LazyVGrid(
@@ -65,8 +83,34 @@ struct StockDetailView: View {
             .padding()
         }
         .background(Color(uiColor: .systemGroupedBackground))
+        .task(id: stock.symbol) {
+            await viewModel.load(symbol: stock.symbol)
+        }
         .navigationTitle(stock.symbol)
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var chart: some View {
+        Group {
+            switch viewModel.state {
+            case .loading:
+                ProgressView("Loading price history")
+            case let .loaded(points) where !points.isEmpty:
+                StockPriceChart(
+                    points: points,
+                    currency: quote?.currency ?? "USD",
+                    percentChange: quote?.percentChange ?? 0
+                )
+            case .loaded:
+                Text("No price history available")
+                    .foregroundStyle(.secondary)
+            case .failed:
+                Text("Price history is unavailable right now.")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: dynamicTypeSize.isAccessibilitySize ? 280 : 220)
     }
 
     private var price: some View {
@@ -82,7 +126,8 @@ struct StockDetailView: View {
         HStack(alignment: .center, spacing: 6) {
             Text(quote?.formattedPercentChange ?? "—")
             if let change = quote?.percentChange,
-                change != 0 {
+               change != 0
+            {
                 Image(systemName: change > 0 ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
                     .font(.caption)
                     .accessibilityHidden(true)
@@ -120,7 +165,8 @@ struct StockDetailView: View {
                 change: 1.26, open: 203.33, previousClose: 202.92,
                 volume: 45_000_000, averageVolume: 52_000_000,
                 low: 201.30, high: 206.22, fiftyTwoWeekLow: 147.01, fiftyTwoWeekHigh: 253.18
-            )
+            ),
+            service: StockService(usesMockData: true)
         )
     }
 }
@@ -129,7 +175,8 @@ struct StockDetailView: View {
     NavigationStack {
         StockDetailView(
             stock: Stock(symbol: "TSLA", companyName: "Tesla, Inc."),
-            quote: Quote(symbol: "TSLA", price: 169.28, percentChange: -1.12)
+            quote: Quote(symbol: "TSLA", price: 169.28, percentChange: -1.12),
+            service: StockService(usesMockData: true)
         )
     }
 }
@@ -138,7 +185,8 @@ struct StockDetailView: View {
     NavigationStack {
         StockDetailView(
             stock: Stock(symbol: "AAPL", companyName: "Apple Inc."),
-            quote: nil
+            quote: nil,
+            service: StockService(usesMockData: true)
         )
     }
 }

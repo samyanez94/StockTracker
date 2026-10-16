@@ -52,7 +52,8 @@ struct WatchListView: View {
             .navigationDestination(for: Stock.self) { stock in
                 StockDetailView(
                     stock: stock,
-                    quote: viewModel.quote(for: stock)
+                    quote: viewModel.quote(for: stock),
+                    service: viewModel.service
                 )
             }
             .toolbar {
