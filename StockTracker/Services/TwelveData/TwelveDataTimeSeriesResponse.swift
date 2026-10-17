@@ -28,9 +28,9 @@ struct TwelveDataTimeSeriesResponse: Decodable {
         let close: String
     }
 
-    func points(for symbol: String) throws -> [StockPricePoint] {
+    func points(for symbol: String, range: StockChartRange = .day) throws -> [StockPricePoint] {
         guard meta.symbol == symbol,
-              meta.interval == "5min",
+              meta.interval == range.interval,
               let timeZone = TimeZone(identifier: meta.exchangeTimezone)
         else {
             throw StockServiceError.invalidResponse
@@ -39,7 +39,7 @@ struct TwelveDataTimeSeriesResponse: Decodable {
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.timeZone = timeZone
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        formatter.dateFormat = range.isIntraday ? "yyyy-MM-dd HH:mm:ss" : "yyyy-MM-dd"
         formatter.isLenient = false
         var dates = Set<Date>()
         return try values.map { bar in

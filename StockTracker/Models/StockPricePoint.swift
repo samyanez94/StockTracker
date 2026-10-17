@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// A closing price at the opening timestamp of a five-minute trading bar.
+/// A closing price at the opening timestamp of a trading bar.
 nonisolated struct StockPricePoint: Identifiable, Equatable, Sendable {
     let date: Date
     let price: Double

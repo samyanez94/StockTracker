@@ -13,13 +13,17 @@ struct StockPriceChart: View {
     @State private var selectedDate: Date?
 
     let points: [StockPricePoint]
+
     let currency: String
+
     let previousClose: Double?
+
+    var range: StockChartRange = .day
 
     private var data: StockPriceChartData {
         StockPriceChartData(
             points: points, currency: currency,
-            previousClose: previousClose, selectedDate: selectedDate
+            previousClose: previousClose, range: range, selectedDate: selectedDate
         )
     }
 
@@ -89,7 +93,7 @@ struct StockPriceChart: View {
     @ChartContentBuilder
     private var previousCloseMark: some ChartContent {
         if let baseline = data.previousCloseBaseline {
-            RuleMark(y: .value("Previous close", baseline))
+            RuleMark(y: .value(range.baselineLabel, baseline))
                 .foregroundStyle(.secondary.opacity(0.65))
                 .lineStyle(StrokeStyle(lineWidth: 1, lineCap: .round, dash: [1, 4]))
         }

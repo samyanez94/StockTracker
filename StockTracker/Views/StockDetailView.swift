@@ -37,8 +37,11 @@ struct StockDetailView: View {
                 .padding()
         }
         .background(Color(uiColor: .systemGroupedBackground))
-        .task(id: stock.symbol) {
-            await viewModel.load(symbol: stock.symbol)
+        .task(id: "\(stock.symbol)-\(viewModel.selectedRange.rawValue)") {
+            await viewModel.load(
+                symbol: stock.symbol,
+                range: viewModel.selectedRange
+            )
         }
         .navigationTitle(stock.symbol)
         .navigationBarTitleDisplayMode(.inline)
@@ -56,6 +59,13 @@ struct StockDetailView: View {
                         .foregroundStyle(.secondary)
                 }
                 chartView
+                    .id(viewModel.selectedRange)
+                Picker("Time range", selection: $viewModel.selectedRange) {
+                    ForEach(StockChartRange.allCases) { range in
+                        Text(range.rawValue).tag(range)
+                    }
+                }
+                .pickerStyle(.segmented)
             }
             .padding(24)
 
@@ -79,7 +89,8 @@ struct StockDetailView: View {
                 StockPriceChart(
                     points: points,
                     currency: quote?.currency ?? "USD",
-                    previousClose: quote?.previousClose
+                    previousClose: viewModel.selectedRange == .day ? quote?.previousClose : points.first?.price,
+                    range: viewModel.selectedRange
                 )
             case .loaded:
                 Text("No price history available")

@@ -35,7 +35,7 @@ actor MockStockService: StockServicing {
         return quotes
     }
 
-    func fetchTimeSeries(symbol _: String) async throws -> [StockPricePoint] {
+    func fetchTimeSeries(symbol _: String, range _: StockChartRange) async throws -> [StockPricePoint] {
         try await prepareResponse()
         return points
     }

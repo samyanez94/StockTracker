@@ -17,15 +17,22 @@ nonisolated protocol StockServicing {
     /// - Throws: An error if the quotes cannot be loaded or decoded.
     func fetchQuotes(symbols: [String]) async throws -> [Quote]
 
-    /// Loads the latest 78 five-minute closing prices, ordered oldest first.
+    /// Loads closing prices for the requested chart range, ordered oldest first.
     /// - Throws: A request, networking, API, or decoding error.
-    func fetchTimeSeries(symbol: String) async throws -> [StockPricePoint]
+    func fetchTimeSeries(symbol: String, range: StockChartRange) async throws -> [StockPricePoint]
 
     /// Finds stocks matching a symbol or company name.
     /// - Parameter query: The search text.
     /// - Returns: Stocks matching the query.
     /// - Throws: An error if the search cannot be completed or decoded.
     func searchStocks(query: String) async throws -> [Stock]
+}
+
+extension StockServicing {
+    /// Convenience for the default intraday range.
+    func fetchTimeSeries(symbol: String) async throws -> [StockPricePoint] {
+        try await fetchTimeSeries(symbol: symbol, range: .day)
+    }
 }
 
 /// Provides quotes, price history, and search using Twelve Data requests and local mock JSON.
@@ -65,8 +72,8 @@ struct StockService: StockServicing {
     /// - Returns: Chronological points, or an empty array when the provider has no bars.
     /// - Throws: A mock-data, request, networking, API, or decoding error.
     @MainActor
-    func fetchTimeSeries(symbol: String) async throws -> [StockPricePoint] {
-        try await fetch(TwelveDataTimeSeriesRequest(symbol: symbol))
+    func fetchTimeSeries(symbol: String, range: StockChartRange) async throws -> [StockPricePoint] {
+        try await fetch(TwelveDataTimeSeriesRequest(symbol: symbol, range: range))
     }
 
     /// Searches Twelve Data for US common stocks quoted in USD.

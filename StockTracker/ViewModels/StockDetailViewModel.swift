@@ -19,6 +19,18 @@ final class StockDetailViewModel {
 
     private(set) var state: State = .loading
 
+    var selectedRange: StockChartRange = .day {
+        didSet {
+            guard selectedRange != oldValue else {
+                return
+            }
+            requestID = UUID()
+            state = .loading
+        }
+    }
+
+    private var cache: [String: [StockChartRange: [StockPricePoint]]] = [:]
+
     private let service: any StockServicing
 
     private var requestID = UUID()
@@ -27,18 +39,30 @@ final class StockDetailViewModel {
         self.service = service
     }
 
-    /// Loads the latest available exchange-local trading day, ignoring cancelled or superseded results.
-    func load(symbol: String) async {
+    /// Loads or reuses a range, ignoring cancelled or superseded requests.
+    func load(symbol: String, range: StockChartRange = .day) async {
+        guard !Task.isCancelled else {
+            return
+        }
         let id = UUID()
         requestID = id
+        if let cached = cache[symbol]?[range] {
+            state = .loaded(cached)
+            return
+        }
         state = .loading
         do {
-            let points = try await service.fetchTimeSeries(symbol: symbol)
+            let points = try await service.fetchTimeSeries(
+                symbol: symbol,
+                range: range
+            )
             try Task.checkCancellation()
             guard requestID == id else {
                 return
             }
-            state = .loaded(latestSession(in: points))
+            let filtered = range.filter(points)
+            cache[symbol, default: [:]][range] = filtered
+            state = .loaded(filtered)
         } catch {
             guard requestID == id,
                   !Task.isCancelled,
@@ -48,20 +72,5 @@ final class StockDetailViewModel {
             }
             state = .failed
         }
-    }
-
-    /// US regular-session bars belong to the session identified by their exchange-local date.
-    ///
-    /// Using the newest bar rather than today also handles weekends, holidays, and pre-open hours.
-    private func latestSession(in points: [StockPricePoint]) -> [StockPricePoint] {
-        guard let latest = points.max(by: { $0.date < $1.date }) else {
-            return []
-        }
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = latest.timeZone
-        return points.filter {
-            calendar.isDate($0.date, inSameDayAs: latest.date)
-        }
-        .sorted { $0.date < $1.date }
     }
 }

@@ -89,6 +89,40 @@ struct TwelveDataTimeSeriesRequestTests {
         }
     }
 
+    @Test(arguments: StockChartRange.allCases)
+    func `each range requests and decodes appropriate bars`(range: StockChartRange) async throws {
+        let request = TwelveDataTimeSeriesRequest(symbol: "AAPL", range: range)
+        let url = try request.url(apiKey: "test-key")
+        let items = try #require(URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems)
+        #expect(items.contains(URLQueryItem(name: "interval", value: range.interval)))
+        #expect(items.contains(URLQueryItem(name: "outputsize", value: String(range.outputSize))))
+        let service: any StockServicing = StockService(usesMockData: true, apiKey: "")
+        let points = try await service.fetchTimeSeries(symbol: "AAPL", range: range)
+        #expect(points.count == range.outputSize)
+        #expect(points.last?.price == 204.18)
+        #expect(points == points.sorted { $0.date < $1.date })
+        #expect(points.first?.timeZone.identifier == "America/New_York")
+        if !range.isIntraday {
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = try #require(TimeZone(identifier: "America/New_York"))
+            #expect(points.allSatisfy { calendar.component(.hour, from: $0.date) == 0 })
+        }
+    }
+
+    @Test
+    func `date only decoding rejects interval mismatch and invalid dates`() throws {
+        let request = TwelveDataTimeSeriesRequest(symbol: "AAPL", range: .month)
+        let payload = #"{"meta":{"symbol":"AAPL","interval":"1day","exchange_timezone":"America/New_York"},"values":[{"datetime":"2026-10-15","close":"100"}],"status":"ok"}"#
+        let points = try request.decode(Data(payload.utf8))
+        #expect(points.first?.date == ISO8601DateFormatter().date(from: "2026-10-15T04:00:00Z"))
+        #expect(throws: StockServiceError.invalidResponse) {
+            try request.decode(Data(payload.replacingOccurrences(of: "1day", with: "1week").utf8))
+        }
+        #expect(throws: StockServiceError.invalidResponse) {
+            try request.decode(Data(payload.replacingOccurrences(of: "2026-10-15", with: "2026-02-30").utf8))
+        }
+    }
+
     private func decode(values: [[String: String]], symbol: String = "AAPL", zone: String = "America/New_York") throws -> [StockPricePoint] {
         let data = try JSONSerialization.data(withJSONObject: [
             "meta": ["symbol": symbol, "interval": "5min", "exchange_timezone": zone],

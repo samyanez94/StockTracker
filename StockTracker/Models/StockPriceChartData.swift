@@ -12,6 +12,7 @@ struct StockPriceChartData {
     let points: [StockPricePoint]
     let currency: String
     let previousClose: Double?
+    var range: StockChartRange = .day
     let selectedDate: Date?
 
     var selectedPoint: StockPricePoint? {
@@ -68,7 +69,7 @@ struct StockPriceChartData {
 
     func formattedDate(_ date: Date) -> String {
         date.formatted(Date.FormatStyle(
-            date: .abbreviated, time: .shortened,
+            date: .abbreviated, time: range.isIntraday ? .shortened : .omitted,
             timeZone: points.first?.timeZone ?? .gmt
         ))
     }
@@ -80,7 +81,7 @@ struct StockPriceChartData {
         } else {
             description = summary
         }
-        return description + ". Daily change \(formattedDelta)"
+        return description + ". \(range.changeLabel) \(formattedDelta)"
     }
 
     private var summary: String {
@@ -90,7 +91,7 @@ struct StockPriceChartData {
             return "No price history available"
         }
         let format = FloatingPointFormatStyle<Double>.Currency(code: currency)
-        let baseline = previousCloseBaseline.map { " Previous close \($0.formatted(format))." } ?? ""
+        let baseline = previousCloseBaseline.map { " \(range.baselineLabel) \($0.formatted(format))." } ?? ""
         return "From \(formattedDate(first.date)) to \(formattedDate(last.date)). Low \(low.formatted(format)), high \(high.formatted(format)). Latest \(last.price.formatted(format))." + baseline
     }
 }
